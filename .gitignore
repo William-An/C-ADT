@@ -1,0 +1,5 @@
+*.out
+*.o
+*.tmp
+.DS_Store
+.DS_store
