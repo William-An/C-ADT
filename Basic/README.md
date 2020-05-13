@@ -32,6 +32,12 @@ See `c_adt_stack_arr.h`, `c_adt_stack_list.h` and `c_adt_stack_arr.c`, `c_adt_st
 
 ## Queue
 
+![Example Figure](https://media.geeksforgeeks.org/wp-content/cdn-uploads/gq/2014/02/Queue.png) image from GeeksforGeeks
+
+[Queue](https://www.geeksforgeeks.org/queue-data-structure/) is another basic data structure in CS that is very similar to Stack, except that it removes it elements based on the FIFO order (first in, first out). Example of Queue can be the line of people at Bank waiting for account operations.
+
+In our version of Queue, we will be using an array to implement the Queue (Also possible to use linkedlist).
+
 See `c_adt_queue.h` and `c_adt_queue.c` for APIs
 
 ## Dequeue

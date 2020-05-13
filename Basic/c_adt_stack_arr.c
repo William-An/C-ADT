@@ -40,7 +40,7 @@ void init_stack(Stack stack) {
 
 /**
  * 
- * @brief: push_stack, push a value onto the stack
+ * @brief: push_stack, push a value onto the stack, should resize stack if necessary
  * @param: val, ValueType, value to be pushed into stack
  * @param: stack, Stack, pointer to Stack_s
  * 
@@ -51,8 +51,9 @@ void push_stack(ValueType val, Stack stack) {
 
 /**
  * 
- * @brief: pop_stack, pop the top value from the stack
+ * @brief: pop_stack, pop the top value from the stack, should resize stack if necessary
  * @param: stack, Stack, pointer to Stack_s
+ * @return: ValueType, value originally at top of the stack
  * 
  * */
 ValueType pop_stack(Stack stack) {
@@ -63,6 +64,7 @@ ValueType pop_stack(Stack stack) {
  * 
  * @brief: peek_stack, return the value on top of stack without removing it from stack
  * @param: stack, Stack, pointer to Stack_s
+ * @return: ValueType, value currently at top of the stack
  * 
  * */
 ValueType peek_stack(Stack stack) {
@@ -73,6 +75,7 @@ ValueType peek_stack(Stack stack) {
  * 
  * @brief: isEmpty_stack, check if a stack is empty (element count is zero)
  * @param: stack, Stack, pointer to Stack_s
+ * @return: int, 1 means Stack stack is empty, 0 otherwise
  * 
  * */
 int isEmpty_stack(Stack stack) {
