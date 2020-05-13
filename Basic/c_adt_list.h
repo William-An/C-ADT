@@ -4,7 +4,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 
-#ifndef ValueTyoe
+#ifndef ValueType
 #define ValueType int
 #endif
 
