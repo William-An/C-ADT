@@ -40,7 +40,13 @@ struct DoubleLinkedList_s {
  * 
  * */
 void init_LL(LinkedList L) {
-
+    if (L == NULL)
+        return;
+    else {
+        L->head = NULL;
+        L->tail = NULL;
+        L->nodeCount = 0;
+    }
 }
 
 /**
@@ -62,7 +68,10 @@ LinkedList free_LL(LinkedList L) {
  * 
  * */
 int isEmpty_LL(LinkedList L) {
-
+    if (L == NULL)
+        return 1;
+    else
+        return L->nodeCount == 0;
 }
 
 /**
@@ -74,7 +83,10 @@ int isEmpty_LL(LinkedList L) {
  * 
  * */
 int isLast_LL(PtrToLinkedListNode node, LinkedList L) {
-
+    if (L == NULL)
+        return 0;
+    else
+        return L->tail->value == node->value;
 }
 
 /**
@@ -86,18 +98,61 @@ int isLast_LL(PtrToLinkedListNode node, LinkedList L) {
  * 
  * */
 PtrToLinkedListNode find_LL(ValueType val, LinkedList L) {
+    if (L == NULL)
+        return;
 
+    PtrToLinkedListNode node = NULL;
+    PtrToLinkedListNode head = L->head;
+    while (head != NULL)
+    {
+        if (head->value == val) {
+            node = head;
+            break;
+        } else if (head->next == NULL)
+            break;
+        else
+            head = head->next;
+    }
+    return node;
 }
 
 /**
  * 
- * @brief: deleteNode_LL, delete the node in LinkedList L with value val and update the head/tail and nodecount correspondingly
+ * @brief: deleteNode_LL, delete the first node in LinkedList L with value val and update the head/tail and nodecount correspondingly
  * @param: val, ValueType, value to be removed from LinkedList L
  * @param: L, LinkedList
  * 
  * */
 void deleteNode_LL(ValueType val, LinkedList L) {
+    if (L == NULL)
+        return;
 
+    PtrToLinkedListNode parent = L->head;
+
+    // Node at head
+    if (parent != NULL && parent->value == val) {
+        L->head = parent->next;
+        L->nodeCount--;
+        free(parent);
+    } else {
+        PtrToLinkedListNode node = parent->next;
+        // Find the node that match
+        while (node != NULL)
+        {
+            if (node->value == val) {
+                // Found the match
+                parent->next = node->next;
+                L->nodeCount--;
+                free(node);
+                node = NULL;
+            } else {
+                // Traverse the list
+                parent = node;
+                node = node->next;
+            }
+        }
+    }
+    return;
 }
 
 /**
@@ -109,7 +164,28 @@ void deleteNode_LL(ValueType val, LinkedList L) {
  * 
  * */
 PtrToLinkedListNode findPrev_LL(ValueType val, LinkedList L) {
+    if (L == NULL)
+        return NULL;
 
+    PtrToLinkedListNode result = NULL;
+    PtrToLinkedListNode parent = L->head;
+    if (parent != NULL && parent->value != val) {
+        PtrToLinkedListNode node = parent->next;
+        // Find the node that match
+        while (node != NULL)
+        {
+            if (node->value == val) {
+                // Found the match
+                result = parent;
+                node = NULL;
+            } else {
+                // Traverse the list
+                parent = node;
+                node = node->next;
+            }
+        }
+    }
+    return result;
 }
 
 /**
@@ -121,7 +197,27 @@ PtrToLinkedListNode findPrev_LL(ValueType val, LinkedList L) {
  * 
  * */
 void insert_LL(ValueType val, LinkedList L, uint32_t index) {
+    if (L == NULL)
+        return;
+    else if (index == 0)
+        insertHead_LL(val, L);
+    else if (index >= L->nodeCount)
+        insertTail_LL(val, L);
+    else {
+        PtrToLinkedListNode parent = L->head;
+        PtrToLinkedListNode node = parent->next;    // Guarantee available
+        for (uint32_t i = 0; i < index - 1; i++) {
+            parent = node;
+            node = node->next;
+        }
 
+        // Allocate space
+        PtrToLinkedListNode tmp = (PtrToLinkedListNode) malloc(sizeof(struct LinkedListNode));
+        tmp->value = val;
+        parent->next = tmp;
+        tmp->next = node;
+        L->nodeCount++;
+    }
 }
 
 /**
@@ -132,7 +228,16 @@ void insert_LL(ValueType val, LinkedList L, uint32_t index) {
  * 
  * */
 void insertHead_LL(ValueType val, LinkedList L) {
-
+    if (L == NULL)
+        return;
+    else {
+        // Allocate space
+        PtrToLinkedListNode tmp = (PtrToLinkedListNode) malloc(sizeof(struct LinkedListNode));
+        tmp->value = val;
+        tmp->next = L->head;
+        L->head = tmp;
+        L->nodeCount++;
+    }
 }
 
 /**
@@ -143,7 +248,16 @@ void insertHead_LL(ValueType val, LinkedList L) {
  * 
  * */
 void insertTail_LL(ValueType val, LinkedList L) {
-
+    if (L == NULL)
+        return;
+    else {
+        // Allocate space
+        PtrToLinkedListNode tmp = (PtrToLinkedListNode) malloc(sizeof(struct LinkedListNode));
+        tmp->value = val;
+        tmp->next = NULL;
+        L->tail->next = tmp;
+        L->nodeCount++;
+    }
 }
 
 // ************************************************************************
