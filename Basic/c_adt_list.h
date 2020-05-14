@@ -22,6 +22,7 @@ struct DoubleLinkedList_s;
 typedef struct DoubleLinkedList_s* DoubleLinkedList;
 
 // LinkedList API
+void init_LL(LinkedList L);
 LinkedList free_LL(LinkedList L);
 int isEmpty_LL(LinkedList L);
 int isLast_LL(PtrToLinkedListNode node, LinkedList L);
@@ -33,6 +34,7 @@ void insertHead_LL(ValueType val, LinkedList L);
 void insertTail_LL(ValueType val, LinkedList L);
 
 // Double LinkedList API
+void init_DLL(DoubleLinkedList L);
 LinkedList free_DLL(DoubleLinkedList L);
 int isEmpty_DLL(DoubleLinkedList L);
 int isLast_DLL(PtrToDoubleListNode node, DoubleLinkedList L);

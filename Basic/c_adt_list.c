@@ -35,6 +35,16 @@ struct DoubleLinkedList_s {
 
 /**
  * 
+ * @brief: init_LL, init the linkedlist L and assign initial value to data fields
+ * @param: L, LinkedList to be init, it must have a space assigned in memory prior to calling this function
+ * 
+ * */
+void init_LL(LinkedList L) {
+
+}
+
+/**
+ * 
  * @brief: free_LL, Free the linkedlist nodes and return the LinkedList afterward
  * @param: L, LinkedList to be free
  * @return: LinkedList
@@ -139,6 +149,16 @@ void insertTail_LL(ValueType val, LinkedList L) {
 // ************************************************************************
 // Double LinkedList API
 // ************************************************************************
+
+/**
+ * 
+ * @brief: init_DLL, init the double linkedlist L and assign initial value to data fields
+ * @param: L, DoubleLinkedList to be init, it must have a space assigned in memory prior to calling this function
+ * 
+ * */
+void init_DLL(DoubleLinkedList L) {
+
+}
 
 /**
  * 
