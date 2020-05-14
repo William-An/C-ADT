@@ -57,7 +57,7 @@ int isEmpty_LL(LinkedList L) {
 
 /**
  * 
- * @brief: isLast_LL, Check if the given node is the last/tail node of the LinkedList L
+ * @brief: isLast_LL, Check if the given node is truly the last/tail node of the LinkedList L
  * @param: node, PtrToLinkedListNode, node to be checked if is the last node of the LinkedList
  * @param: L, LinkedList
  * @return: int, 1 if the node is the last node in the list, 0 otherwise
