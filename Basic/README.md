@@ -42,4 +42,6 @@ See `c_adt_queue.h` and `c_adt_queue.c` for APIs
 
 ## Dequeue
 
+[Dequeue](https://www.geeksforgeeks.org/deque-set-1-introduction-applications/) (double ended queue) is a combination between Stack and Queue. The resulted data structure dequeue supports inserting and removing elements at both ends of a queue.
+
 See `c_adt_dequeue.h` and `c_adt_dequeue.c` for APIs

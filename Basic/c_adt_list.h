@@ -29,8 +29,8 @@ PtrToLinkedListNode find_LL(ValueType val, LinkedList L);
 void deleteNode_LL(ValueType val, LinkedList L);
 PtrToLinkedListNode findPrev_LL(ValueType val, LinkedList L);
 void insert_LL(ValueType val, LinkedList L, uint32_t index);
-void insertAtHead_LL(ValueType val, LinkedList L);
-void insertAtTail_LL(ValueType val, LinkedList L);
+void insertHead_LL(ValueType val, LinkedList L);
+void insertTail_LL(ValueType val, LinkedList L);
 
 // Double LinkedList API
 LinkedList free_DLL(DoubleLinkedList L);
@@ -40,7 +40,7 @@ PtrToDoubleListNode find_DLL(ValueType val, DoubleLinkedList L);
 void deleteNodeVal_DLL(ValueType val, DoubleLinkedList L);
 void deleteNode_DLL(PtrToDoubleListNode node, DoubleLinkedList L);
 void insert_DLL(ValueType val, DoubleLinkedList L, uint32_t index);
-void insertAtHead_DLL(ValueType val, DoubleLinkedList L);
-void insertAtTail_DLL(ValueType val, DoubleLinkedList L);
+void insertHead_DLL(ValueType val, DoubleLinkedList L);
+void insertTail_DLL(ValueType val, DoubleLinkedList L);
 
 #endif

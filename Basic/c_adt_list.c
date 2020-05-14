@@ -116,23 +116,23 @@ void insert_LL(ValueType val, LinkedList L, uint32_t index) {
 
 /**
  * 
- * @brief: insertAtHead_LL, insert a node with value val to LinkedList L at head, update the node count correspondingly
+ * @brief: insertHead_LL, insert a node with value val to LinkedList L at head, update the node count correspondingly
  * @param: val, ValueType, value of the node to be inserted
  * @param: L, LinkedList
  * 
  * */
-void insertAtHead_LL(ValueType val, LinkedList L) {
+void insertHead_LL(ValueType val, LinkedList L) {
 
 }
 
 /**
  * 
- * @brief: insertAtTail_LL, insert a node with value val to LinkedList L at tail, update the node count correspondingly
+ * @brief: insertTail_LL, insert a node with value val to LinkedList L at tail, update the node count correspondingly
  * @param: val, ValueType, value of the node to be inserted
  * @param: L, LinkedList
  * 
  * */
-void insertAtTail_LL(ValueType val, LinkedList L) {
+void insertTail_LL(ValueType val, LinkedList L) {
 
 }
 
@@ -223,22 +223,22 @@ void insert_DLL(ValueType val, DoubleLinkedList L, uint32_t index) {
 
 /**
  * 
- * @brief: insertAtHead_DLL, insert a node with value val to DoubleLinkedList L at head, update the node count correspondingly
+ * @brief: insertHead_DLL, insert a node with value val to DoubleLinkedList L at head, update the node count correspondingly
  * @param: val, ValueType, value of the node to be inserted
  * @param: L, DoubleLinkedList
  * 
  * */
-void insertAtHead_DLL(ValueType val, DoubleLinkedList L) {
+void insertHead_DLL(ValueType val, DoubleLinkedList L) {
 
 }
 
 /**
  * 
- * @brief: insertAtTail_DLL, insert a node with value val to DoubleLinkedList L at tail, update the node count correspondingly
+ * @brief: insertTail_DLL, insert a node with value val to DoubleLinkedList L at tail, update the node count correspondingly
  * @param: val, ValueType, value of the node to be inserted
  * @param: L, DoubleLinkedList
  * 
  * */
-void insertAtTail_DLL(ValueType val, DoubleLinkedList L) {
+void insertTail_DLL(ValueType val, DoubleLinkedList L) {
 
 }
