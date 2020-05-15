@@ -3,3 +3,6 @@
 *.tmp
 .DS_Store
 .DS_store
+.vscode/
+*/build/
+build/

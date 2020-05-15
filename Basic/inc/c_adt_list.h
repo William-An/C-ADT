@@ -8,7 +8,11 @@
 #define ValueType int
 #endif
 
-// Data Structure Definition
+/**
+ * 
+ * Data Structure Declaration for LinkedList and Double LinkedList
+ * 
+ * */
 struct LinkedListNode;
 typedef struct LinkedListNode* PtrToLinkedListNode;
 
@@ -21,9 +25,38 @@ typedef struct DoubleLinkedListNode* PtrToDoubleListNode;
 struct DoubleLinkedList_s;
 typedef struct DoubleLinkedList_s* DoubleLinkedList;
 
+/**
+ * 
+ * Data Structure definition for LinkedList and Double LinkedList
+ * 
+ * */
+
+struct LinkedListNode {
+    ValueType value;
+    PtrToLinkedListNode next;
+};
+
+struct LinkedList_s {
+    PtrToLinkedListNode head;
+    PtrToLinkedListNode tail;
+    uint32_t nodeCount;
+};
+
+struct DoubleLinkedListNode {
+    ValueType value;
+    PtrToDoubleListNode next;
+    PtrToDoubleListNode prev;
+};
+
+struct DoubleLinkedList_s {
+    PtrToDoubleListNode head;
+    PtrToDoubleListNode tail;
+    uint32_t nodeCount;
+};
+
 // LinkedList API
 void init_LL(LinkedList L);
-LinkedList free_LL(LinkedList L);
+void free_LL(LinkedList L);
 int isEmpty_LL(LinkedList L);
 int isLast_LL(PtrToLinkedListNode node, LinkedList L);
 PtrToLinkedListNode find_LL(ValueType val, LinkedList L);

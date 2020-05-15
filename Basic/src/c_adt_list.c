@@ -1,34 +1,5 @@
 #include "c_adt_list.h"
 
-/**
- * 
- * Data Structure definition for LinkedList and Double LinkedList
- * 
- * */
-
-struct LinkedListNode {
-    ValueType value;
-    PtrToLinkedListNode next;
-};
-
-struct LinkedList_s {
-    PtrToLinkedListNode head;
-    PtrToLinkedListNode tail;
-    uint32_t nodeCount;
-};
-
-struct DoubleLinkedListNode {
-    ValueType value;
-    PtrToDoubleListNode next;
-    PtrToDoubleListNode prev;
-};
-
-struct DoubleLinkedList_s {
-    PtrToDoubleListNode head;
-    PtrToDoubleListNode tail;
-    uint32_t nodeCount;
-};
-
 // ************************************************************************
 // LinkedList API
 // ************************************************************************
@@ -51,14 +22,36 @@ void init_LL(LinkedList L) {
 
 /**
  * 
- * @brief: free_LL, Free the linkedlist nodes and return the LinkedList afterward
+ * @brief: _free_LL, Recursively free a linkedlist
  * @param: L, LinkedList to be free
  * @return: LinkedList
  * 
  * */
-LinkedList free_LL(LinkedList L) {
-
+void _free_LL(PtrToLinkedListNode node) {
+    if (node->next == NULL) {
+        free(node);
+    } else {
+        _free_LL(node->next);
+        free(node);
+    }
+    return;
 }
+
+/**
+ * 
+ * @brief: free_LL, Free the linkedlist nodes and return the LinkedList afterward
+ * @param: L, LinkedList to be free
+ * 
+ * */
+void free_LL(LinkedList L) {
+    if (L != NULL && L->head != NULL) {
+        _free_LL(L->head);
+        L->nodeCount = 0;
+        L->head = NULL;
+        L->tail = NULL;
+    }
+}
+
 
 /**
  * 
@@ -83,7 +76,7 @@ int isEmpty_LL(LinkedList L) {
  * 
  * */
 int isLast_LL(PtrToLinkedListNode node, LinkedList L) {
-    if (L == NULL)
+    if (L == NULL || L->tail == NULL)
         return 0;
     else
         return L->tail->value == node->value;
@@ -99,7 +92,7 @@ int isLast_LL(PtrToLinkedListNode node, LinkedList L) {
  * */
 PtrToLinkedListNode find_LL(ValueType val, LinkedList L) {
     if (L == NULL)
-        return;
+        return NULL;
 
     PtrToLinkedListNode node = NULL;
     PtrToLinkedListNode head = L->head;
@@ -124,7 +117,7 @@ PtrToLinkedListNode find_LL(ValueType val, LinkedList L) {
  * 
  * */
 void deleteNode_LL(ValueType val, LinkedList L) {
-    if (L == NULL)
+    if (L == NULL || L->nodeCount == 0)
         return;
 
     PtrToLinkedListNode parent = L->head;
@@ -132,6 +125,8 @@ void deleteNode_LL(ValueType val, LinkedList L) {
     // Node at head
     if (parent != NULL && parent->value == val) {
         L->head = parent->next;
+        if (L->tail == parent)  // update tail pointer
+            L->tail = NULL;
         L->nodeCount--;
         free(parent);
     } else {
@@ -142,6 +137,8 @@ void deleteNode_LL(ValueType val, LinkedList L) {
             if (node->value == val) {
                 // Found the match
                 parent->next = node->next;
+                if (L->tail == node)
+                    L->tail = parent;
                 L->nodeCount--;
                 free(node);
                 node = NULL;
@@ -237,6 +234,8 @@ void insertHead_LL(ValueType val, LinkedList L) {
         tmp->next = L->head;
         L->head = tmp;
         L->nodeCount++;
+        if (L->nodeCount == 1) // initial insert
+            L->tail = L->head;
     }
 }
 
@@ -255,7 +254,14 @@ void insertTail_LL(ValueType val, LinkedList L) {
         PtrToLinkedListNode tmp = (PtrToLinkedListNode) malloc(sizeof(struct LinkedListNode));
         tmp->value = val;
         tmp->next = NULL;
-        L->tail->next = tmp;
+        if (L->tail == NULL) {
+            // initial insert
+            L->head = tmp;
+            L->tail = tmp;
+        } else {
+            L->tail->next = tmp;
+            L->tail = tmp;
+        }
         L->nodeCount++;
     }
 }
@@ -282,7 +288,7 @@ void init_DLL(DoubleLinkedList L) {
  * 
  * */
 LinkedList free_DLL(DoubleLinkedList L) {
-
+    return NULL;
 }
 
 /**
@@ -293,7 +299,7 @@ LinkedList free_DLL(DoubleLinkedList L) {
  * 
  * */
 int isEmpty_DLL(DoubleLinkedList L) {
-
+    return 0;
 }
 
 /**
@@ -305,7 +311,7 @@ int isEmpty_DLL(DoubleLinkedList L) {
  * 
  * */
 int isLast_DLL(PtrToDoubleListNode node, DoubleLinkedList L) {
-
+    return 0;
 }
 
 /**
@@ -317,7 +323,7 @@ int isLast_DLL(PtrToDoubleListNode node, DoubleLinkedList L) {
  * 
  * */
 PtrToDoubleListNode find_DLL(ValueType val, DoubleLinkedList L) {
-
+    return NULL;
 }
 
 /**
@@ -328,7 +334,7 @@ PtrToDoubleListNode find_DLL(ValueType val, DoubleLinkedList L) {
  * 
  * */
 void deleteNodeVal_DLL(ValueType val, DoubleLinkedList L) {
-
+    
 }
 
 /**
