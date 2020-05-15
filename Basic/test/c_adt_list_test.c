@@ -218,6 +218,7 @@ void test_init_LL() {
     assert(test_list->tail == NULL);
     assert(test_list->nodeCount == 0);
     printf("Test complete\n");
+    printDivider();
    
     free_LL(test_list);
     free(test_list);
@@ -629,97 +630,407 @@ void test_insertTail_LL() {
 // ************************************************************************
 
 void test_init_DLL() {
-// Preparing testing variables
-    char* testcase_tags = "testing freeing of linkedlist";
-    LinkedList test_list = malloc(sizeof(struct LinkedList_s));
+    // Preparing testing variables
+    char * header[] = {"Testing: test_init_DLL"};
+    char * footer[] = {"End Testing: test_init_DLL"};
+    DoubleLinkedList test_list = malloc(sizeof(struct DoubleLinkedList_s));
+    printSectionBlock(header, 1);
 
-    // Test
-    printSubSectionBlock(testcase_tags);
-
-    printf("Test complete\n");
+    // Test 1: initialization of double linkedlist
+    printSubSectionBlock("testing initializing empty double linked list");
+    init_DLL(test_list);
+    printNewLine();
+    assert(test_list != NULL);
+    assert(test_list->head == NULL);
+    assert(test_list->tail == NULL);
+    assert(test_list->nodeCount == 0);
+    printf("%s complete\n", "testing initializing empty double linked list");
     printDivider();
+
+    // Clean up
+    free_DLL(test_list);
+    free(test_list);
+    printSectionBlock(footer, 1);
+    printNewLine();
 }
 
 void test_free_DLL() {
-// Preparing testing variables
-    char* testcase_tags = "testing freeing of linkedlist";
-    LinkedList test_list = malloc(sizeof(struct LinkedList_s));
+    // Preparing testing variables
+    char * header[] = {"Testing: test_free_DLL"};
+    char * footer[] = {"End Testing: test_free_DLL"};
+    DoubleLinkedList test_list = malloc(sizeof(struct DoubleLinkedList_s));
+    init_DLL(test_list);
+    printSectionBlock(header, 1);
 
-    // Test
-    printSubSectionBlock(testcase_tags);
-
-    printf("Test complete\n");
+    // Test 1: Free empty list
+    printSubSectionBlock("testing freeing empty double linked list");
+    free_DLL(test_list);
+    assert(test_list->head == NULL);
+    assert(test_list->tail == NULL);
+    assert(test_list->nodeCount == 0);
+    printf("%s complete\n", "testing freeing empty double linked list");
     printDivider();
+
+    // Test 2: Free list with single node
+    printSubSectionBlock("testing freeing double linked list with single node");
+    insertHead_DLL(1, test_list);
+    free_DLL(test_list);
+    assert(test_list->head == NULL);
+    assert(test_list->tail == NULL);
+    assert(test_list->nodeCount == 0);
+    printf("%s complete\n", "testing freeing double linked list with single node");
+    printDivider();
+
+
+    // Test 3: Free list with multiple nodes
+    printSubSectionBlock("testing freeing double linked list with multiple nodes");
+    insertHead_DLL(1, test_list);
+    insertHead_DLL(3, test_list);
+    insertTail_DLL(2, test_list);
+    free_DLL(test_list);
+    assert(test_list->head == NULL);
+    assert(test_list->tail == NULL);
+    assert(test_list->nodeCount == 0);
+    printf("%s complete\n", "testing freeing double linked list with multiple nodes");
+    printDivider();
+
+    // Clean up
+    free_DLL(test_list);
+    free(test_list);
+    printSectionBlock(footer, 1);
+    printNewLine();
 }
 
 void test_isEmpty_DLL() {
-// Preparing testing variables
-    char* testcase_tags = "testing freeing of linkedlist";
-    LinkedList test_list = malloc(sizeof(struct LinkedList_s));
+    // Preparing testing variables
+    char * header[] = {"Testing: test_isEmpty_DLL"};
+    char * footer[] = {"End Testing: test_isEmpty_DLL"};
+    DoubleLinkedList test_list = malloc(sizeof(struct DoubleLinkedList_s));
+    init_DLL(test_list);
+    printSectionBlock(header, 1);
 
-    // Test
-    printSubSectionBlock(testcase_tags);
-
-    printf("Test complete\n");
+    // Test 1: Test empty list
+    printSubSectionBlock("testing empty linked list");
+    assert(isEmpty_DLL(test_list) == 1);
+    printf("%s complete\n", "testing empty linked list");
     printDivider();
+
+    // Test 2: Test list with single node
+    printSubSectionBlock("testing list with single node");
+    insertHead_DLL(1, test_list);
+    assert(isEmpty_DLL(test_list) == 0);
+    printf("%s complete\n", "testing list with single node");
+    printDivider();
+
+    // Test 3: Test list with multiple node
+    printSubSectionBlock("testing list with multiple node");
+    insertHead_DLL(2, test_list);
+    assert(isEmpty_DLL(test_list) == 0);
+    printf("%s complete\n", "testing list with multiple node");
+    printDivider();
+
+    // Test 4: Test list after removing all nodes
+    printSubSectionBlock("testing list after removing all nodes");
+    deleteNode_DLL(2, test_list);
+    deleteNode_DLL(1, test_list);
+    assert(isEmpty_DLL(test_list) == 1);
+    printf("%s complete\n", "testing list after removing all nodes");
+    printDivider();
+
+    // Clean up
+    free_DLL(test_list);
+    free(test_list);
+    printSectionBlock(footer, 1);
+    printNewLine();
 }
 
 void test_find_DLL() {
-// Preparing testing variables
-    char* testcase_tags = "testing freeing of linkedlist";
-    LinkedList test_list = malloc(sizeof(struct LinkedList_s));
+    // Preparing testing variables
+    char * header[] = {"Testing: test_find_DLL"};
+    char * footer[] = {"End Testing: test_find_DLL"};
+    DoubleLinkedList test_list = malloc(sizeof(struct DoubleLinkedList_s));
+    init_DLL(test_list);
+    printSectionBlock(header, 1);
 
-    // Test
-    printSubSectionBlock(testcase_tags);
-
-    printf("Test complete\n");
+    // Test 1: Test empty list
+    printSubSectionBlock("testing empty list");
+    assert(find_DLL(1, test_list) == NULL);
+    printf("%s complete\n", "testing empty list");
     printDivider();
+
+    // Test 2: Test list with single node
+    printSubSectionBlock("test list with single node");
+    insertHead_DLL(1, test_list);
+    assert(find_DLL(1, test_list)->value == 1);
+    printf("%s complete\n", "test list with single node");
+    printDivider();
+
+    // Test 3: Test list with multiple node
+    printSubSectionBlock("test list with multiple nodes");
+    insertHead_DLL(2, test_list);
+    insertHead_DLL(3, test_list);
+    assert(find_DLL(1, test_list)->value == 1);
+    assert(find_DLL(2, test_list)->value == 2);
+    assert(find_DLL(3, test_list)->value == 3);
+    printf("%s complete\n", "test list with multiple nodes");
+    printDivider();
+
+    // Test 4: Test list with multiple node after removing one
+    printSubSectionBlock("test list with multiple nodes after removing one");
+    deleteNode_DLL(1, test_list);
+    assert(find_DLL(1, test_list) == NULL);
+    assert(find_DLL(2, test_list)->value == 2);
+    assert(find_DLL(3, test_list)->value == 3);
+    printf("%s complete\n", "test list with multiple nodes after removing one");
+    printDivider();
+
+    // Clean up
+    free_DLL(test_list);
+    free(test_list);
+    printSectionBlock(footer, 1);
+    printNewLine();
 }
 
 void test_deleteNode_DLL() {
-// Preparing testing variables
-    char* testcase_tags = "testing freeing of linkedlist";
-    LinkedList test_list = malloc(sizeof(struct LinkedList_s));
+    // Preparing testing variables
+    char * header[] = {"Testing: test_deleteNode_DLL"};
+    char * footer[] = {"End Testing: test_deleteNode_DLL"};
+    DoubleLinkedList test_list = malloc(sizeof(struct DoubleLinkedList_s));
+    init_DLL(test_list);
+    printSectionBlock(header, 1);
 
-    // Test
-    printSubSectionBlock(testcase_tags);
-
-    printf("Test complete\n");
+    // Test 1: Test with empty list
+    printSubSectionBlock("test with empty list");
+    deleteNode_DLL(1, test_list);
+    assert(test_list->head == NULL);
+    assert(test_list->tail == NULL);
+    assert(test_list->nodeCount == 0);
+    printf("%s complete\n", "test with empty list");
     printDivider();
+
+    // Test 2: Test list with single node
+    printSubSectionBlock("test list with single node");
+    insertHead_DLL(1, test_list);
+    deleteNode_DLL(1, test_list);
+    assert(test_list->head == NULL);
+    assert(test_list->tail == NULL);
+    assert(test_list->nodeCount == 0);
+    printf("%s complete\n", "test list with single node");
+    printDivider();
+
+    // Test 3: Test list with multiple nodes
+    printSubSectionBlock("test list with multiple nodes at head");
+    insertHead_DLL(1, test_list);
+    insertHead_DLL(2, test_list);
+    insertHead_DLL(3, test_list);
+    deleteNode_DLL(1, test_list);
+    assert(test_list->head->value == 3);
+    assert(test_list->tail->value == 2);
+    assert(test_list->head->next->value == 2);
+    assert(test_list->nodeCount == 2);
+    printf("%s complete\n", "test list with multiple nodes at head");
+    printDivider();
+
+    // Test 4: Test list with multiple nodes
+    printSubSectionBlock("test list with multiple nodes at middle");
+    free_DLL(test_list);
+    insertHead_DLL(1, test_list);
+    insertHead_DLL(2, test_list);
+    insertHead_DLL(3, test_list);
+    deleteNode_DLL(2, test_list);
+    assert(test_list->head->value == 3);
+    assert(test_list->tail->value == 1);
+    assert(test_list->head->next->value == 1);
+    assert(test_list->nodeCount == 2);
+    printf("%s complete\n", "test list with multiple nodes at middle");
+    printDivider();
+
+    // Test 5: Test list with multiple nodes
+    printSubSectionBlock("test list with multiple nodes at tail");
+    free_DLL(test_list);
+    insertHead_DLL(1, test_list);
+    insertHead_DLL(2, test_list);
+    insertHead_DLL(3, test_list);
+    deleteNode_DLL(3, test_list);
+    assert(test_list->head->value == 2);
+    assert(test_list->tail->value == 1);
+    assert(test_list->head->next->value == 1);
+    assert(test_list->nodeCount == 2);
+    printf("%s complete\n", "test list with multiple nodes at tail");
+    printDivider();
+
+    // Clean up
+    free_DLL(test_list);
+    free(test_list);
+    printSectionBlock(footer, 1);
+    printNewLine();
 }
 
 void test_insert_DLL() {
-// Preparing testing variables
-    char* testcase_tags = "testing freeing of linkedlist";
-    LinkedList test_list = malloc(sizeof(struct LinkedList_s));
+    // Preparing testing variables
+    char * header[] = {"Testing: test_insert_DLL"};
+    char * footer[] = {"End Testing: test_insert_DLL"};
+    DoubleLinkedList test_list = malloc(sizeof(struct DoubleLinkedList_s));
+    init_DLL(test_list);
+    printSectionBlock(header, 1);
 
-    // Test
-    printSubSectionBlock(testcase_tags);
-
-    printf("Test complete\n");
+    // Test 1: Test with empty list
+    printSubSectionBlock("test with empty list at head");
+    insert_DLL(1, test_list, 0);
+    assert(test_list->head->value == 1);
+    assert(test_list->tail->value == 1);
+    assert(test_list->nodeCount == 1);
+    printf("%s complete\n", "test with empty list at head");
     printDivider();
+
+    // Test 2: Test with empty list at tail
+    printSubSectionBlock("test with empty list at tail");
+    free_DLL(test_list);
+    insert_DLL(1, test_list, 2);
+    assert(test_list->head->value == 1);
+    assert(test_list->tail->value == 1);
+    assert(test_list->nodeCount == 1);
+    printf("%s complete\n", "test with empty list at tail");
+    printDivider();
+
+    // Test 3: Test with list with multiple nodes
+    printSubSectionBlock("test with multiple node insert");
+    free_DLL(test_list);
+
+    // List construction
+    insert_DLL(1, test_list, 0);
+    insert_DLL(2, test_list, 0);
+    insert_DLL(3, test_list, 0);
+    assert(test_list->head->value == 3);
+    assert(test_list->tail->value == 1);
+    assert(test_list->nodeCount == 3);
+
+    // Insert node at middle
+    insert_DLL(4, test_list, 1);
+    insert_DLL(5, test_list, 3);
+    assert(test_list->nodeCount == 5);
+    assert(test_list->head->next->value == 4);
+    assert(test_list->tail->prev->value == 5);
+    printf("%s complete\n", "test with multiple node insert");
+    printDivider();
+
+    // Clean up
+    free_DLL(test_list);
+    free(test_list);
+    printSectionBlock(footer, 1);
+    printNewLine();
 }
 
 void test_insertHead_DLL() {
-// Preparing testing variables
-    char* testcase_tags = "testing freeing of linkedlist";
-    LinkedList test_list = malloc(sizeof(struct LinkedList_s));
+    // Preparing testing variables
+    char * header[] = {"Testing: test_insertHead_DLL"};
+    char * footer[] = {"End Testing: test_insertHead_DLL"};
+    DoubleLinkedList test_list = malloc(sizeof(struct DoubleLinkedList_s));
+    init_DLL(test_list);
+    printSectionBlock(header, 1);
 
-    // Test
-    printSubSectionBlock(testcase_tags);
-
-    printf("Test complete\n");
+    // Test 1: Test with empty list
+    printSubSectionBlock("test with empty list");
+    insertHead_DLL(1, test_list);
+    assert(test_list->head->value == 1);
+    assert(test_list->tail->value == 1);
+    assert(test_list->nodeCount == 1);
+    printf("%s complete\n", "test with empty list");
     printDivider();
+
+    // Test 2: Multiple insertion
+    printSubSectionBlock("test with multiple insertion");
+    free_DLL(test_list);
+    insertHead_DLL(1, test_list);
+    insertHead_DLL(2, test_list);
+    insertHead_DLL(3, test_list);
+    insertHead_DLL(4, test_list);
+    insertHead_DLL(5, test_list);
+    insertHead_DLL(6, test_list);
+
+    assert(test_list->head->value == 6);
+    assert(test_list->head->prev == NULL);
+
+    assert(test_list->head->next->value == 5);
+    assert(test_list->head->next->prev->value == 6);
+
+    assert(test_list->head->next->next->value == 4);
+    assert(test_list->head->next->next->prev->value == 5);
+
+    assert(test_list->head->next->next->next->value == 3);
+    assert(test_list->head->next->next->next->prev->value == 4);
+
+    assert(test_list->head->next->next->next->next->value == 2);
+    assert(test_list->head->next->next->next->next->prev->value == 3);
+
+    assert(test_list->head->next->next->next->next->next->value == 1);
+    assert(test_list->head->next->next->next->next->next->prev->value == 2);
+    assert(test_list->head->next->next->next->next->next->next == NULL);
+    assert(test_list->tail->value == 1);
+    assert(test_list->nodeCount == 6);
+    printf("%s complete\n", "test with multiple insertion");
+    printDivider();
+
+    // Clean up
+    free_DLL(test_list);
+    free(test_list);
+    printSectionBlock(footer, 1);
+    printNewLine();
 }
  
 void test_insertTail_DLL() {
-// Preparing testing variables
-    char* testcase_tags = "testing freeing of linkedlist";
-    LinkedList test_list = malloc(sizeof(struct LinkedList_s));
+    // Preparing testing variables
+    char * header[] = {"Testing: test_insertTail_DLL"};
+    char * footer[] = {"End Testing: test_insertTail_DLL"};
+    DoubleLinkedList test_list = malloc(sizeof(struct DoubleLinkedList_s));
+    init_DLL(test_list);
+    printSectionBlock(header, 1);
 
-    // Test
-    printSubSectionBlock(testcase_tags);
-
-    printf("Test complete\n");
+    // Test 1: Test with empty list
+    printSubSectionBlock("test with empty list");
+    insertTail_DLL(1, test_list);
+    assert(test_list->head->value == 1);
+    assert(test_list->tail->value == 1);
+    assert(test_list->nodeCount == 1);
+    printf("%s complete\n", "test with empty list");
     printDivider();
+
+    // Test 2: Multiple insertion
+    printSubSectionBlock("test with multiple insertion");
+    free_DLL(test_list);
+    insertTail_DLL(1, test_list);
+    insertTail_DLL(2, test_list);
+    insertTail_DLL(3, test_list);
+    insertTail_DLL(4, test_list);
+    insertTail_DLL(5, test_list);
+    insertTail_DLL(6, test_list);
+
+    assert(test_list->head->value == 1);
+    assert(test_list->head->prev == NULL);
+
+    assert(test_list->head->next->value == 2);
+    assert(test_list->head->next->prev->value == 1);
+
+    assert(test_list->head->next->next->value == 3);
+    assert(test_list->head->next->next->prev->value == 2);
+
+    assert(test_list->head->next->next->next->value == 4);
+    assert(test_list->head->next->next->next->prev->value == 3);
+
+    assert(test_list->head->next->next->next->next->value == 5);
+    assert(test_list->head->next->next->next->next->prev->value == 4);
+
+    assert(test_list->head->next->next->next->next->next->value == 6);
+    assert(test_list->head->next->next->next->next->next->prev->value == 5);
+    assert(test_list->head->next->next->next->next->next->next == NULL);
+    assert(test_list->tail->value == 6);
+    assert(test_list->nodeCount == 6);
+    printf("%s complete\n", "test with multiple insertion");
+    printDivider();
+
+    // Clean up
+    free_DLL(test_list);
+    free(test_list);
+    printSectionBlock(footer, 1);
+    printNewLine();
 }

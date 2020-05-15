@@ -50,7 +50,7 @@ This Git repo aims at practicing basic data structure and algorithms as well as 
 * Baruvka's MST Algorithm
 * Union Find Algorithm
 
-### [Parrten Matching](./PatternMatching/README.md)
+### [Pattern Matching](./PatternMatching/README.md)
 
 * Tries
 * Huffman Encoding

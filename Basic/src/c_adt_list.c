@@ -287,22 +287,6 @@ void init_DLL(DoubleLinkedList L) {
 
 /**
  * 
- * @brief: _free_DLL, Recursively free a double linkedlist
- * @param: L, Double LinkedList to be free
- * 
- * */
-void _free_LL(PtrToLinkedListNode node) {
-    if (node->next == NULL) {
-        free(node);
-    } else {
-        _free_LL(node->next);
-        free(node);
-    }
-    return;
-}
-
-/**
- * 
  * @brief: free_DLL, Free the double linkedlist nodes and return the double LinkedList afterward
  * @param: L, DoubleLinkedList to be free
  * 
@@ -321,7 +305,7 @@ void free_DLL(DoubleLinkedList L) {
     L->head = NULL;
     L->tail = NULL;
     L->nodeCount = 0;
-    return NULL;
+    return;
 }
 
 /**
@@ -392,8 +376,23 @@ void deleteNode_DLL(ValueType val, DoubleLinkedList L) {
         return;
     else {
         PtrToDoubleListNode node = find_DLL(val, L);
-        node->prev->next = node->next;
-        node->next = node->prev;
+        if (node == NULL)
+            return;
+        else if (node->prev != NULL) {   // not head
+            node->prev->next = node->next;
+            if (node->next != NULL) // not tail
+                node->next->prev = node->prev;
+            else // Tail
+                L->tail = node->prev;
+        }
+        else {  // head
+            if (node->next != NULL) // not tail as well
+                node->next->prev = NULL;
+            else    // node is tail
+                L->tail = NULL;
+            L->head = node->next;
+        }
+        L->nodeCount--;
         free(node);
     }
 }
@@ -448,11 +447,14 @@ void insertHead_DLL(ValueType val, DoubleLinkedList L) {
         tmp->value = val;
         tmp->next = L->head;
         tmp->prev = NULL;
-        L->head->prev = tmp;
-        L->head = tmp;
-        L->nodeCount++;
-        if (L->nodeCount == 1)  // initial insert
+        if (L->head == NULL) {  // initial insert
+            L->head = tmp;
             L->tail = L->head;
+        } else {
+            L->head->prev = tmp;
+            L->head = tmp;
+        }
+        L->nodeCount++;
     }
 }
 
