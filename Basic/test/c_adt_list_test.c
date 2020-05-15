@@ -8,7 +8,7 @@
 #include "c_adt_list.h"
 #define ValueType int
 
-#define ARGUMENT_AMOUNT 18
+#define ARGUMENT_AMOUNT 17
 const char* argumentName[] = {
     "help",
 
@@ -52,7 +52,6 @@ void test_init_DLL();
 void test_free_DLL();
 void test_isEmpty_DLL();
 void test_find_DLL();
-void test_deleteNodeVal_DLL();
 void test_deleteNode_DLL();
 void test_insert_DLL();
 void test_insertHead_DLL();
@@ -129,7 +128,6 @@ int main(int argc, char* argv[]) {
         test_insert_DLL();
         test_isEmpty_DLL();
         test_find_DLL();
-        test_deleteNodeVal_DLL();
         test_deleteNode_DLL();
         test_free_DLL();
         printSectionSingle("Test complete for Double LinkedList");
@@ -667,18 +665,6 @@ void test_isEmpty_DLL() {
 }
 
 void test_find_DLL() {
-// Preparing testing variables
-    char* testcase_tags = "testing freeing of linkedlist";
-    LinkedList test_list = malloc(sizeof(struct LinkedList_s));
-
-    // Test
-    printSubSectionBlock(testcase_tags);
-
-    printf("Test complete\n");
-    printDivider();
-}
-
-void test_deleteNodeVal_DLL() {
 // Preparing testing variables
     char* testcase_tags = "testing freeing of linkedlist";
     LinkedList test_list = malloc(sizeof(struct LinkedList_s));

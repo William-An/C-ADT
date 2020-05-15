@@ -24,7 +24,6 @@ void init_LL(LinkedList L) {
  * 
  * @brief: _free_LL, Recursively free a linkedlist
  * @param: L, LinkedList to be free
- * @return: LinkedList
  * 
  * */
 void _free_LL(PtrToLinkedListNode node) {
@@ -277,17 +276,51 @@ void insertTail_LL(ValueType val, LinkedList L) {
  * 
  * */
 void init_DLL(DoubleLinkedList L) {
+    if (L == NULL)
+        return;
+    else {
+        L->head = NULL;
+        L->tail = NULL;
+        L->nodeCount = 0;
+    }
+}
 
+/**
+ * 
+ * @brief: _free_DLL, Recursively free a double linkedlist
+ * @param: L, Double LinkedList to be free
+ * 
+ * */
+void _free_LL(PtrToLinkedListNode node) {
+    if (node->next == NULL) {
+        free(node);
+    } else {
+        _free_LL(node->next);
+        free(node);
+    }
+    return;
 }
 
 /**
  * 
  * @brief: free_DLL, Free the double linkedlist nodes and return the double LinkedList afterward
  * @param: L, DoubleLinkedList to be free
- * @return: DoubleLinkedList
  * 
  * */
-LinkedList free_DLL(DoubleLinkedList L) {
+void free_DLL(DoubleLinkedList L) {
+    if (L == NULL || L->nodeCount == 0)
+        return;
+
+    PtrToDoubleListNode node = L->tail;
+    while (node != NULL && node->prev != NULL) {
+        node = node->prev;
+        free(node->next);
+    }
+    free(node); // Reach head
+
+    L->head = NULL;
+    L->tail = NULL;
+    L->nodeCount = 0;
     return NULL;
 }
 
@@ -299,7 +332,10 @@ LinkedList free_DLL(DoubleLinkedList L) {
  * 
  * */
 int isEmpty_DLL(DoubleLinkedList L) {
-    return 0;
+    if (L == NULL)
+        return 1;
+    else
+        return L->nodeCount == 0;
 }
 
 /**
@@ -311,7 +347,10 @@ int isEmpty_DLL(DoubleLinkedList L) {
  * 
  * */
 int isLast_DLL(PtrToDoubleListNode node, DoubleLinkedList L) {
-    return 0;
+    if (L == NULL || L->tail == NULL)
+        return 0;
+    else
+        return L->tail->value == node->value;
 }
 
 /**
@@ -323,31 +362,41 @@ int isLast_DLL(PtrToDoubleListNode node, DoubleLinkedList L) {
  * 
  * */
 PtrToDoubleListNode find_DLL(ValueType val, DoubleLinkedList L) {
-    return NULL;
-}
+    if (L == NULL)
+        return NULL;
 
-/**
- * 
- * @brief: deleteNodeVal_DLL, delete the node in DoubleLinkedList L with value val and update the head/tail and nodecount correspondingly
- * @param: val, ValueType, value to be removed from DoubleLinkedList L
- * @param: L, DoubleLinkedList
- * 
- * */
-void deleteNodeVal_DLL(ValueType val, DoubleLinkedList L) {
-    
+    PtrToDoubleListNode node = NULL;
+    PtrToDoubleListNode head = L->head;
+    while (head != NULL)
+    {
+        if (head->value == val) {
+            node = head;
+            break;
+        } else if (head->next == NULL)
+            break;
+        else
+            head = head->next;
+    }
+    return node;
 }
 
 /**
  * 
  * @brief: deleteNode_DLL, delete the node in DoubleLinkedList L and update the head/tail and nodecount correspondingly
- * @param: node, PtrToDoubleListNode, node to be removed from DoubleLinkedList L
+ * @param: val, ValueType, value to be removed from DoubleLinkedList L
  * @param: L, DoubleLinkedList
  * 
  * */
-void deleteNode_DLL(PtrToDoubleListNode node, DoubleLinkedList L) {
-
+void deleteNode_DLL(ValueType val, DoubleLinkedList L) {
+    if (L == NULL || L->nodeCount == 0)
+        return;
+    else {
+        PtrToDoubleListNode node = find_DLL(val, L);
+        node->prev->next = node->next;
+        node->next = node->prev;
+        free(node);
+    }
 }
-
 
 /**
  * 
@@ -358,7 +407,29 @@ void deleteNode_DLL(PtrToDoubleListNode node, DoubleLinkedList L) {
  * 
  * */
 void insert_DLL(ValueType val, DoubleLinkedList L, uint32_t index) {
+    if (L == NULL)
+        return;
+    else if (index == 0)
+        insertHead_DLL(val, L);
+    else if (index >= L->nodeCount)
+        insertTail_DLL(val, L);
+    else {
+        PtrToDoubleListNode parent = L->head;
+        PtrToDoubleListNode node = parent->next;    // Guarantee available
+        for (uint32_t i = 0; i < index - 1; i++) {
+            parent = node;
+            node = node->next;
+        }
 
+        // Allocate space
+        PtrToDoubleListNode tmp = (PtrToDoubleListNode) malloc(sizeof(struct DoubleLinkedListNode));
+        tmp->value = val;
+        parent->next = tmp;
+        tmp->prev = parent;
+        tmp->next = node;
+        node->prev = tmp;
+        L->nodeCount++;
+    }
 }
 
 /**
@@ -369,7 +440,20 @@ void insert_DLL(ValueType val, DoubleLinkedList L, uint32_t index) {
  * 
  * */
 void insertHead_DLL(ValueType val, DoubleLinkedList L) {
-
+    if (L == NULL)
+        return;
+    else {
+        // Allocate space
+        PtrToDoubleListNode tmp = (PtrToDoubleListNode) malloc(sizeof(struct DoubleLinkedListNode));
+        tmp->value = val;
+        tmp->next = L->head;
+        tmp->prev = NULL;
+        L->head->prev = tmp;
+        L->head = tmp;
+        L->nodeCount++;
+        if (L->nodeCount == 1)  // initial insert
+            L->tail = L->head;
+    }
 }
 
 /**
@@ -380,5 +464,23 @@ void insertHead_DLL(ValueType val, DoubleLinkedList L) {
  * 
  * */
 void insertTail_DLL(ValueType val, DoubleLinkedList L) {
-
+    if (L == NULL)
+        return;
+    else {
+        // Allocate space
+        PtrToDoubleListNode tmp = (PtrToDoubleListNode) malloc(sizeof(struct DoubleLinkedListNode));
+        tmp->value = val;
+        tmp->next = NULL;
+        tmp->prev = NULL;
+        if (L->tail == NULL) {
+            // initial insert
+            L->head = tmp;
+            L->tail = tmp;
+        } else {
+            L->tail->next = tmp;
+            tmp->prev = L->tail;
+            L->tail = tmp;
+        }
+        L->nodeCount++;
+    }
 }

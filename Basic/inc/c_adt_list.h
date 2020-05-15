@@ -68,12 +68,11 @@ void insertTail_LL(ValueType val, LinkedList L);
 
 // Double LinkedList API
 void init_DLL(DoubleLinkedList L);
-LinkedList free_DLL(DoubleLinkedList L);
+void free_DLL(DoubleLinkedList L);
 int isEmpty_DLL(DoubleLinkedList L);
 int isLast_DLL(PtrToDoubleListNode node, DoubleLinkedList L);
 PtrToDoubleListNode find_DLL(ValueType val, DoubleLinkedList L);
-void deleteNodeVal_DLL(ValueType val, DoubleLinkedList L);
-void deleteNode_DLL(PtrToDoubleListNode node, DoubleLinkedList L);
+void deleteNode_DLL(ValueType val, DoubleLinkedList L);
 void insert_DLL(ValueType val, DoubleLinkedList L, uint32_t index);
 void insertHead_DLL(ValueType val, DoubleLinkedList L);
 void insertTail_DLL(ValueType val, DoubleLinkedList L);
