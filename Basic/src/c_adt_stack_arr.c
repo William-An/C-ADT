@@ -8,9 +8,8 @@
 
 struct Stack_s {
     ValueType* arr;
-    uint32_t size;      // Current element count in the stack
+    uint32_t size;      // Current element count in the stack, use as available slot to insert element
     uint32_t maxSize;   // Current array size
-    uint32_t tail;      // Current stack tail index in the array (can be pushed)
 };
 
 // ************************************************************************
@@ -25,7 +24,12 @@ struct Stack_s {
  * 
  * */
 void _resize_stack(Stack stack, uint32_t newSize) {
-
+    if (stack == NULL || newSize < stack->size)
+        return;
+    else {
+        stack->arr = (ValueType*) realloc(stack->arr, newSize * sizeof(ValueType));
+        stack->maxSize = newSize;
+    }
 }
 
 /**
@@ -35,7 +39,13 @@ void _resize_stack(Stack stack, uint32_t newSize) {
  * 
  * */
 void init_stack(Stack stack) {
-
+    if (stack == NULL)
+        return;
+    else {
+        stack->arr = (ValueType*) malloc(sizeof(ValueType) * MIN_STACK_SIZE);
+        stack->size = 0;
+        stack->maxSize = MIN_STACK_SIZE;
+    }
 }
 
 /**
@@ -46,7 +56,19 @@ void init_stack(Stack stack) {
  * 
  * */
 void push_stack(ValueType val, Stack stack) {
-
+    if (stack == NULL)
+        return;
+    else {
+        // todo Push element to stack, resize if necessary
+        if (stack->size < stack->maxSize) {
+            stack->arr[stack->size] = val;
+            stack->size++;
+        } else {
+            // Full stack, need to resize
+            _resize_stack(stack, stack->maxSize * 2);
+            push_stack(val, stack);
+        }
+    }
 }
 
 /**
@@ -57,7 +79,21 @@ void push_stack(ValueType val, Stack stack) {
  * 
  * */
 ValueType pop_stack(Stack stack) {
-
+    if (stack == NULL)
+        return (ValueType) 0;
+    else {
+        // todo pop element from stack, resize if necessary
+        if (stack->size == 0)   // Empty stack
+            return (ValueType) 0;
+        else {
+            ValueType res = stack->arr[0];
+            stack->size--;
+            // Resize if less than 1/4
+            if (stack->maxSize != MIN_STACK_SIZE && stack->size < stack->maxSize / 4)
+                _resize_stack(stack, stack->maxSize / 2);
+            return res;
+        }
+    }
 }
 
 /**
@@ -68,7 +104,16 @@ ValueType pop_stack(Stack stack) {
  * 
  * */
 ValueType peek_stack(Stack stack) {
-    
+    if (stack == NULL)
+        return (ValueType) 0;
+    else {
+        // todo pop element from stack, resize if necessary
+        if (stack->size == 0)   // Empty stack
+            return (ValueType) 0;
+        else {
+            return stack->arr[0];
+        }
+    }
 }
 
 /**
@@ -79,7 +124,10 @@ ValueType peek_stack(Stack stack) {
  * 
  * */
 int isEmpty_stack(Stack stack) {
-
+    if (stack == NULL)
+        return 1;
+    else
+        return stack->size == 0;
 }
 
 /**
@@ -89,5 +137,13 @@ int isEmpty_stack(Stack stack) {
  * 
  * */
 void free_stack(Stack stack) {
-
+    if (stack == NULL)
+        return;
+    else {
+        free(stack->arr);
+        stack->size = 0;
+        stack->maxSize = MIN_STACK_SIZE;
+        stack->arr = NULL;
+        return;
+    }
 }

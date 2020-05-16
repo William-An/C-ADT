@@ -16,6 +16,7 @@
 #endif
 
 // Data Structure Definition
+typedef struct LinkedList_s Stack_s;
 typedef LinkedList Stack;   // Using linkedlist implementation of stack
 
 // Stack API
