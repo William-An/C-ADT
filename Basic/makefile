@@ -10,23 +10,26 @@ VFLAGS = --tool=memcheck --leak-check=yes
 
 # Directory
 BUILDDIR := build
-SOURCE := src
+SRC := src
 INCLUDE := inc
 TEST := test
 
-
 # Name of all source file
-SOURCES := $(shell find $(SOURCE) -name '*.c')
+SRCS := $(wildcard $(SRC)/*.c)
 # todo for loop to loop through?
-# SOURCES := $(shell filename=$$(basename $(SOURCES)); echo "$${filename%.*}")
-SOURCES := $(shell filename=$$(basename $(SOURCES)); echo $$filename)
+# SRCS := $(shell filename=$$(basename $(SRCS)); echo "$${filename%.*}")
+# SRCS := $(shell filename=$$(basename $(SRCS)); echo $$filename)
+
+# Name of all object files
+OBJECTS := $(subst $(SRC), $(BUILDDIR), $(SRCS))
+OBJECTS := $(patsubst %.c, %.o, $(OBJECT_LIST))
 
 
 ##############################################################################
 # Designate targets that do not correspond directly to files so that they are
 # run every time they are called
 ##############################################################################
-.PHONY: help clean
+.PHONY: help clean tmp
 .PHONY: full_test full_run
 
 ##############################################################################
@@ -85,6 +88,9 @@ clean:
 	@rm -f *.d
 	@echo "Done\n\n"
 
+tmp:
+	@echo $(OBJECT_LIST)
+
 ##############################################################################
 # General Compilation Targets
 ##############################################################################
@@ -93,15 +99,15 @@ clean:
 
 # Mkdir for dependence directory
 # todo autodependency?
-%.d: $(SOURCE)/%.c
+%.d: $(SRC)/%.c
 	@set -e; rm -f $@; \
 	$(CC) -MM $(CFlags) -I $(INCLUDE) $< > $@.$$$$; \
 	sed 's,\($*\)\.o[ :]*,\1.o $@ : ,g' < $@.$$$$ > $@; \
 	rm -f $@.$$$$
 
-%.o $(INCLUDE)/%.h: $(SOURCE)/%.c 
+%.o $(INCLUDE)/%.h: $(SRC)/%.c 
 	@echo "Compiling object file for $*"
-	@$(CC) -c -o $(BUILDDIR)/$*.o -I $(INCLUDE) $(CFlags) $(SOURCE)/$*.c 
+	@$(CC) -c -o $(BUILDDIR)/$*.o -I $(INCLUDE) $(CFlags) $(SRC)/$*.c 
 	@echo "Done"
 
 %_test: $(TEST)/%_test.c %.o
@@ -111,13 +117,13 @@ clean:
 
 # todo
 full_test:
-	@echo "Compiling test programs for all source files in $(SOURCE)"
+	@echo "Compiling test programs for all source files in $(SRC)"
 	@echo "ERROR: NOT IMPLEMENTED"
 	@echo "Done"
 
-%_main: $(TEST)/%_main.c $(SOURCE)/%.c
+%_main: $(TEST)/%_main.c $(SRC)/%.c
 	@echo "Compiling $*_main.c"
-	@$(CC) -o $(BUILDDIR)/$*_main.out -I $(INCLUDE) $(CFlags) $(TEST)/$*_main.c $(SOURCE)/$*.c
+	@$(CC) -o $(BUILDDIR)/$*_main.out -I $(INCLUDE) $(CFlags) $(TEST)/$*_main.c $(SRC)/$*.c
 	@echo "Done"
 
 ##############################################################################
@@ -140,8 +146,8 @@ full_test:
 	@echo "Done"
 
 full_run: full_test
-	@echo "Running test programs for all source files in $(SOURCE)"
+	@echo "Running test programs for all source files in $(SRC)"
 	@echo "ERROR: NOT IMPLEMENTED"
 	@echo "Done"
 
-include $(SOURCES:.c=.d)
+# include $(SRCS:.c=.d)
