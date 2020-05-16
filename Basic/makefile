@@ -40,7 +40,7 @@ help:
 	@echo "  clean                - removes the complied files"
 	@echo
 	@echo "Compilation targets:"
-	@echo "  %_obj                - compiles the individual data structure or"
+	@echo "  %.o                  - compiles the individual data structure or"
 	@echo "                         algorithm with source file as of src/%.c"
 	@echo
 	@echo "  %_test               - compiles the test program (with name like"
@@ -89,14 +89,15 @@ clean:
 ##############################################################################
 
 # Complie the data structure or algorithm itself only
-%_obj: $(SOURCE)/%.c
+# todo autodependency?
+%.o: $(SOURCE)/%.c $(INCLUDE)/%.h
 	@echo "Compiling object file for $*"
 	@$(CC) -c -o $(BUILDDIR)/$*.o -I $(INCLUDE) $(CFlags) $(SOURCE)/$*.c 
 	@echo "Done"
 
-%_test: $(TEST)/%_test.c $(SOURCE)/%.c
+%_test: $(TEST)/%_test.c %.o
 	@echo "Compiling test program for $*"
-	@$(CC) -o $(BUILDDIR)/$*_test.out -I $(INCLUDE) $(CFlags) $(TEST)/$*_test.c $(SOURCE)/$*.c
+	@$(CC) -o $(BUILDDIR)/$*_test.out -I $(INCLUDE) $(CFlags) $(TEST)/$*_test.c $(BUILDDIR)/$*.o
 	@echo "Done"
 
 # todo
