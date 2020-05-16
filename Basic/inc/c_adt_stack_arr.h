@@ -23,6 +23,18 @@
 struct Stack_s;
 typedef struct Stack_s* Stack;
 
+/**
+ * 
+ * Data Structure definition for array implementation of Stack
+ * 
+ * */
+
+struct Stack_s {
+    ValueType* arr;
+    uint32_t size;      // Current element count in the stack, use as available slot to insert element
+    uint32_t maxSize;   // Current array size
+};
+
 // Stack API
 void init_stack(Stack stack);
 void push_stack(ValueType val, Stack stack);

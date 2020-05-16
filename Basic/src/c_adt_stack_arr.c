@@ -1,17 +1,5 @@
 #include "c_adt_stack_arr.h"
 
-/**
- * 
- * Data Structure definition for array implementation of Stack
- * 
- * */
-
-struct Stack_s {
-    ValueType* arr;
-    uint32_t size;      // Current element count in the stack, use as available slot to insert element
-    uint32_t maxSize;   // Current array size
-};
-
 // ************************************************************************
 // Stack API
 // ************************************************************************
@@ -86,7 +74,7 @@ ValueType pop_stack(Stack stack) {
         if (stack->size == 0)   // Empty stack
             return (ValueType) 0;
         else {
-            ValueType res = stack->arr[0];
+            ValueType res = stack->arr[stack->size - 1];
             stack->size--;
             // Resize if less than 1/4
             if (stack->maxSize != MIN_STACK_SIZE && stack->size < stack->maxSize / 4)
@@ -111,7 +99,7 @@ ValueType peek_stack(Stack stack) {
         if (stack->size == 0)   // Empty stack
             return (ValueType) 0;
         else {
-            return stack->arr[0];
+            return stack->arr[stack->size - 1];
         }
     }
 }
