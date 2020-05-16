@@ -42,6 +42,7 @@ ValueType pop_stack(Stack stack) {
     ValueType res = ((LinkedList) stack)->head->value;
     PtrToLinkedListNode node = ((LinkedList) stack)->head;
     ((LinkedList) stack)->head = node->next;
+    ((LinkedList) stack)->nodeCount--;
     free(node);
     return res;
 }
