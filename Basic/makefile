@@ -81,7 +81,8 @@ help:
 clean:
 	@echo "Removing all complied files"
 	@rm -rf test/*.tmp
-	@rm -f	$(BUILDDIR)/*.out $(BUILDDIR)/*.a $(BUILDDIR)/*.o
+	@rm -rf	$(BUILDDIR)/*
+	@rm -f *.d
 	@echo "Done\n\n"
 
 ##############################################################################
@@ -89,15 +90,23 @@ clean:
 ##############################################################################
 
 # Complie the data structure or algorithm itself only
+
+# Mkdir for dependence directory
 # todo autodependency?
-%.o: $(SOURCE)/%.c $(INCLUDE)/%.h
+%.d: $(SOURCE)/%.c
+	@set -e; rm -f $@; \
+	$(CC) -MM $(CFlags) -I $(INCLUDE) $< > $@.$$$$; \
+	sed 's,\($*\)\.o[ :]*,\1.o $@ : ,g' < $@.$$$$ > $@; \
+	rm -f $@.$$$$
+
+%.o $(INCLUDE)/%.h: $(SOURCE)/%.c 
 	@echo "Compiling object file for $*"
 	@$(CC) -c -o $(BUILDDIR)/$*.o -I $(INCLUDE) $(CFlags) $(SOURCE)/$*.c 
 	@echo "Done"
 
 %_test: $(TEST)/%_test.c %.o
 	@echo "Compiling test program for $*"
-	@$(CC) -o $(BUILDDIR)/$*_test.out -I $(INCLUDE) $(CFlags) $(TEST)/$*_test.c $(BUILDDIR)/$*.o
+	$(CC) -o $(BUILDDIR)/$*_test.out -I $(INCLUDE) $(CFlags) $(TEST)/$*_test.c $(BUILDDIR)/$*.o
 	@echo "Done"
 
 # todo
@@ -134,3 +143,5 @@ full_run: full_test
 	@echo "Running test programs for all source files in $(SOURCE)"
 	@echo "ERROR: NOT IMPLEMENTED"
 	@echo "Done"
+
+include $(SOURCES:.c=.d)
