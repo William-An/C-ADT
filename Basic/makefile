@@ -39,6 +39,9 @@ TESTDEPS := $(TESTDEPS:.c=.d)
 # Avoid deleting .out file due to interrupted makefile
 .PRECIOUS: $(BUILD)/%.out
 
+# Enable wildcard matching
+.SECONDEXPANSION: $(DEPSDIR)/%.d
+
 ##############################################################################
 # Make the default target (the one called when no specific one is invoked) to
 # output the proper usage of this makefile
@@ -110,41 +113,35 @@ $(DEPSDIR) $(BUILD): ; @mkdir -p $@
 
 # Used to compile possible source codes used by the make target
 
-# Let header file depends on source code
-$(INC)/%.h: $(SRC)/%.c ;
+# Let header file depends on source code, if changed, rebuild object file
+# $(INC)/%.h: $(SRC)/%.c ;
 
 # Generating dependency files for source code
-$(DEPSDIR)/%.d: $(SRC)/%.c | $(DEPSDIR)
+$(DEPSDIR)/%.d: $$(wildcard $(SRC)/%.c) $$(wildcard $(TEST)/%.c) | $(DEPSDIR)
 	@echo "Generating dependency into $@"
 	@$(CC) -I $(INC) $(CFlags) $(DEPFlags) $<
 	@echo "Done"
 
-# Generating dependency files for test program
-$(DEPSDIR)/%_test.d: $(TEST)/%_test.c | $(DEPSDIR)
-	@echo "Generating test file dependency into $@"
-	@$(CC) -I $(INC) $(CFlags) $(DEPFlags) $<
-	@echo "Done"
-
-# Generating dependency files for main program
-$(DEPSDIR)/%_main.d: $(TEST)/%_main.c | $(DEPSDIR)
-	@echo "Generating test file dependency into $@"
-	@$(CC) -I $(INC) $(CFlags) $(DEPFlags) $<
-	@echo "Done"
-
+# todo let this get rebuilt every time the prerequisti changed?
 $(BUILD)/%.o: | $(BUILD)
 	@$(eval obj_tmp=$+)
 	@$(eval src_tmp=$(firstword $(obj_tmp)))
 	@echo "Compiling object file for $@"
-	@$(eval obj_tmp=$(patsubst %.h, %.o, $(obj_tmp)))			# Convert the header names into the required object names
-	@$(eval obj_tmp = $(notdir $(obj_tmp)))						# Remove the $(INC) dir 
-	@$(eval obj_tmp = $(filter %.o, $(obj_tmp))) 				# Filter out the first source file needed
-	@$(eval srcs_tmp = $(addprefix $(BUILD)/, $(obj_tmp)))		# Add build/ prefix to objects
-	@$(CC) -c -o $@ -I $(INC) $(CFlags) $(firstword $(src_tmp))	# Compile the object file for this source code
+	@$(eval obj_tmp=$(patsubst %.h, %.o, $(obj_tmp)))				# Convert the header names into the required object names
+	@$(eval obj_tmp = $(notdir $(obj_tmp)))							# Remove the $(INC) dir 
+	@$(eval obj_tmp = $(filter %.o, $(obj_tmp))) 					# Filter out the first source file needed
+	@$(eval srcs_tmp = $(addprefix $(BUILD)/, $(obj_tmp)))			# Add build/ prefix to objects
+	@$(CC) -c -o $@ -I $(INC) $(CFlags) $(firstword $(src_tmp))		# Compile the object file for this source code
+	@$(MAKE) -f $(THIS_FILE) $(srcs_tmp) 						# Build dependent object file as well
 	@echo "Done"
 	
+# todo cannot detect change of another source code file
+# todo currently depends only on header file and main source code
+# todo if the head file corresponding source code file is changed
+# todo the make should rebuild and relink
+# todo .o should depends on other .o
 # Link the compiled object code to build executable
-$(BUILD)/%.out: $(BUILD)/%.o  |  $(BUILD)
-	@$(MAKE) -f $(THIS_FILE) $(srcs_tmp) # invoke other target
+$(BUILD)/%.out: $(BUILD)/%.o | $(BUILD)
 	@echo "Compiling test program for $*"
 	@$(CC) -o $@ -I $(INC) $(CFlags) $< $(srcs_tmp)
 	@echo "Done"
