@@ -2,10 +2,13 @@
 # General Makefile for C ADT compilation
 ##############################################################################
 
+# Output setting
+.RECIPEPREFIX = >
+
 # Variables
 CC = gcc
 CFlags = -std=c99 -Wall -g3
-DEPFlags = -MM -MF $@
+DEPFlags = -MP -MM -MF $@ -MT '$(BUILD)/$(strip $(patsubst %.d, %.o, $(notdir $@)))'
 VALGRIND = valgrind
 VFLAGS = --tool=memcheck --leak-check=yes
 
@@ -31,12 +34,13 @@ DEPS := $(DEPS:.c=.d)
 TESTDEPS := $(patsubst $(TEST)%, $(DEPSDIR)%, $(TESTS))
 TESTDEPS := $(TESTDEPS:.c=.d)
 
-##############################################################################
 # Designate targets that do not correspond directly to files so that they are
 # run every time they are called
-##############################################################################
 .PHONY: help clean %_test %_test_run %_main %_test_run_specific
 .PHONY: full_test full_run
+
+# Avoid deleting .out file due to interrupted makefile
+.PRECIOUS: $(BUILD)/%.out
 
 ##############################################################################
 # Make the default target (the one called when no specific one is invoked) to
@@ -104,13 +108,8 @@ $(DEPSDIR) $(BUILD): ; @mkdir -p $@
 
 # Used to compile possible source codes used by the make target
 
-# todo why get rebuilt every time?
-# Since the object file does not exist in current directory but in build directory
-# $(INC)/%.h: $(SRC)/%.c  | $(BUILD)
-# 	@echo "Compiling object file for $@"
-# 	@$(CC) -c -o $(BUILD)/$*.o -I $(INC) $(CFlags) $<
-# 	@echo "Done"
-
+# Let header file depends on source code
+$(INC)/%.h: $(SRC)/%.c ;
 
 # Generating dependency files for source code
 $(DEPSDIR)/%.d: $(SRC)/%.c | $(DEPSDIR)
@@ -124,27 +123,30 @@ $(DEPSDIR)/%_test.d: $(TEST)/%_test.c | $(DEPSDIR)
 	@$(CC) -I $(INC) $(CFlags) $(DEPFlags) $<
 	@echo "Done"
 
-%.o: | $(BUILD)
-	@echo "Compiling object file for $<"
-	@$(eval obj_tmp=$(patsubst %.h, %.o, $+))					# Convert the header names into the required object names
-	@$(eval obj_tmp = $(notdir $(obj_tmp)))						# Remove the $(INC) dir 
-	@$(eval obj_tmp = $(filter %.o, $(obj_tmp))) 				# Filter out the first source file needed
-	@$(eval srcs_tmp = $(addprefix $(BUILD)/, $(obj_tmp)))	# Add build/ prefix to objects
-	@$(CC) -c -o $(BUILD)/$@ -I $(INC) $(CFlags) $<		# Compile the object file for this source code
+# Generating dependency files for main program
+$(DEPSDIR)/%_main.d: $(TEST)/%_main.c | $(DEPSDIR)
+	@echo "Generating test file dependency into $@"
+	@$(CC) -I $(INC) $(CFlags) $(DEPFlags) $<
 	@echo "Done"
 
-# Link the compiled object code
-%_test: %_test.o  |  $(BUILD)
-	@echo $(notdir $(srcs_tmp))
-	@$(MAKE) -f $(THIS_FILE) $(notdir $(srcs_tmp)) # invoke other target
+$(BUILD)/%.o: | $(BUILD)
+	@$(eval obj_tmp=$+)
+	@$(eval src_tmp=$(firstword $(obj_tmp)))
+	@echo "Compiling object file for $@"
+	@$(eval obj_tmp=$(patsubst %.h, %.o, $(obj_tmp)))						# Convert the header names into the required object names
+	@$(eval obj_tmp = $(notdir $(obj_tmp)))									# Remove the $(INC) dir 
+	@$(eval obj_tmp = $(filter %.o, $(obj_tmp))) 							# Filter out the first source file needed
+	@$(eval srcs_tmp = $(addprefix $(BUILD)/, $(obj_tmp)))					# Add build/ prefix to objects
+	$(CC) -c -o $@ -I $(INC) $(CFlags) $(firstword $(src_tmp))	# Compile the object file for this source code
+	@echo "Done"
+	
+# Link the compiled object code to build executable
+$(BUILD)/%.out: $(BUILD)/%.o  |  $(BUILD)
+	# todo what to do if the previous object code doesnot changed?
+	@echo $+
+	@$(MAKE) -f $(THIS_FILE) $(srcs_tmp) # invoke other target
 	@echo "Compiling test program for $*"
-	@$(CC) -o $(BUILD)/$*_test.out -I $(INC) $(CFlags) $(BUILD)/$< $(srcs_tmp)
-	@echo "Done"
-
-# Link the compiled object code
-%_main: %_main.o | $(BUILD)
-	@echo "Compiling $*_main.c"
-	@$(CC) -o $(BUILD)/$*_main.out -I $(INC) $(CFlags) $(BUILD)/$< $(srcs_tmp)
+	@$(CC) -o $@ -I $(INC) $(CFlags) $< $(srcs_tmp)
 	@echo "Done"
 
 # todo
@@ -158,18 +160,18 @@ full_test: | $(BUILD)
 ##############################################################################
 
 # todo add checker for memory leaks
-%_test_run: %_test
+%_test_run: $(BUILD)/%_test.out
 	@echo "Running test program for $*"
-	@$(BUILD)/$*_test.out
+	@$<
 	@echo
 	@echo "Running memory check for test program"
 	@echo
 	@$(VALGRIND) $(VFLAGS) $(BUILD)/$*_test.out
 	@echo "Done"
 
-%_test_run_specific: %_test
+%_test_run_specific: $(BUILD)/%_test.out
 	@echo "Running test program for $* with $(ARGS) as arguments"
-	@$(BUILD)/$*_test.out $(ARGS)
+	@$< $(ARGS)
 	@echo "Done"
 
 full_run: full_test

@@ -23,7 +23,7 @@ void init_stack(Stack stack) {
  * @param: stack, Stack, pointer to Stack_s
  * 
  * */
-void push_stack(ValueType val, Stack stack) {
+void push_stack(ValueType val, Stack stack) { 
     if (stack == NULL)
         return;
     insertHead_LL(val, (LinkedList) stack);
