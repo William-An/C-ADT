@@ -61,7 +61,7 @@ void enqueue_q(ValueType val, Queue q) {
     if (q == NULL)
         return;
     else {
-        if (q->size < q->maxSize) { // Not need to resize
+        if (q->size < q->maxSize - 1) { // Not need to resize
             (q->arr)[q->tail] = val;
             (q->tail)++;
             q->tail %= q->maxSize;
@@ -84,7 +84,7 @@ ValueType dequeue_q(Queue q) {
     if (q == NULL)
         return (ValueType) 0;
     else {
-        if (q->size < q->maxSize / 4 && q->maxSize > MIN_QUEUE_SIZE) {  // Resize to 1/4
+        if (q->size < (q->maxSize / 4) - 1 && q->maxSize > MIN_QUEUE_SIZE) {  // Resize to 1/4
             _resize_queue(q, q->maxSize / 2);
             return dequeue_q(q);
         } else if (!isEmpty_q(q)) {  // Dequeue

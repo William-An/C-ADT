@@ -140,8 +140,8 @@ int main(int argc, char* argv[]) {
 // ************************************************************************
 void test_init_queue() {
     // Preparing testing variables
-    char * header[] = {"Testing: ", __func__};
-    char * footer[] = {"End Testing", __func__};
+    char * header[] = {"Testing: ", (char *)__func__};
+    char * footer[] = {"End Testing", (char *)__func__};
     Queue test_queue = malloc(sizeof(struct Queue_s));
     printSectionBlock(header, sizeof(header) / sizeof(char *));
 
@@ -165,8 +165,8 @@ void test_init_queue() {
 
 void test_enqueue_q() {
     // Preparing testing variables
-    char * header[] = {"Testing: ", __func__};
-    char * footer[] = {"End Testing", __func__};
+    char * header[] = {"Testing: ", (char *)__func__};
+    char * footer[] = {"End Testing", (char *)__func__};
     Queue test_queue = malloc(sizeof(struct Queue_s));
     init_queue(test_queue);
     printSectionBlock(header, sizeof(header) / sizeof(char *));
@@ -284,26 +284,30 @@ void test_enqueue_q() {
     
     int read_index = 0;
     int write_index = 0;
+    int tmp = write_index;
 
     // enqueue 500 elements
-    for(; write_index < write_index + 500; write_index++)
-        enqueue_q(test_arr[write_index], test_arr);
+    for(; write_index < tmp + 500; write_index++)
+        enqueue_q(test_arr[write_index], test_queue);
 
     // read 200 times
-    for (; read_index < read_index + 200; read_index++)
+    tmp = read_index;
+    for (; read_index < tmp + 200; read_index++)
         assert(dequeue_q(test_queue) == test_arr[read_index]);
     
     // Enqueue another 300
-    for(; write_index < write_index + 300; write_index++)
-        enqueue_q(test_arr[write_index], test_arr);
+    tmp = write_index;
+    for(; write_index < tmp + 300; write_index++)
+        enqueue_q(test_arr[write_index], test_queue);
 
     // Read another 400 elements
-    for (; read_index < read_index + 400; read_index++)
+    tmp = read_index;
+    for (; read_index < tmp + 400; read_index++)
         assert(dequeue_q(test_queue) == test_arr[read_index]);
 
     // Write all into the queue
     for(; write_index < 1000; write_index++)
-        enqueue_q(test_arr[write_index], test_arr);
+        enqueue_q(test_arr[write_index], test_queue);
     
     // Read all
     for (; read_index < 1000; read_index++)
@@ -321,8 +325,8 @@ void test_enqueue_q() {
 
 void test_dequeue_q() {
     // Preparing testing variables
-    char * header[] = {"Testing: ", __func__};
-    char * footer[] = {"End Testing", __func__};
+    char * header[] = {"Testing: ", (char *)__func__};
+    char * footer[] = {"End Testing", (char *)__func__};
     Queue test_queue = malloc(sizeof(struct Queue_s));
     init_queue(test_queue);
     printSectionBlock(header, sizeof(header) / sizeof(char *));
@@ -347,8 +351,8 @@ void test_dequeue_q() {
     assert(dequeue_q(test_queue) == 1);
     assert(test_queue->arr != NULL);
     assert(test_queue->maxSize == MIN_QUEUE_SIZE);
-    assert(test_queue->head == 0);
-    assert(test_queue->tail == 0);
+    assert(test_queue->head == 1);
+    assert(test_queue->tail == 1);
     assert(test_queue->size == 0);
     printf("%s complete\n", "testing dequeuing with single element queue");
     printDivider();
@@ -356,6 +360,8 @@ void test_dequeue_q() {
     // Test 3: Queue with multiple elements
     printSubSectionBlock("testing dequeuing with multiple element queue");
     printNewLine();
+    free_q(test_queue);
+    init_queue(test_queue);
     for (int i = 1; i < 4; i++)
         enqueue_q(i, test_queue);
 
@@ -367,7 +373,7 @@ void test_dequeue_q() {
         assert(dequeue_q(test_queue) == i);
         assert(test_queue->arr != NULL);
         assert(test_queue->maxSize == MIN_QUEUE_SIZE);
-        assert(test_queue->head == i - 1);
+        assert(test_queue->head == i);
         assert(test_queue->tail == tail_pos);
         assert(test_queue->size == size_orig - i);
     }
@@ -405,8 +411,8 @@ void test_dequeue_q() {
 
 void test_peek_q() {
     // Preparing testing variables
-    char * header[] = {"Testing: ", __func__};
-    char * footer[] = {"End Testing", __func__};
+    char * header[] = {"Testing: ", (char *)__func__};
+    char * footer[] = {"End Testing", (char *)__func__};
     Queue test_queue = malloc(sizeof(struct Queue_s));
     init_queue(test_queue);
     printSectionBlock(header, sizeof(header) / sizeof(char *));
@@ -448,8 +454,8 @@ void test_peek_q() {
 
 void test_isEmpty_q() {
     // Preparing testing variables
-    char * header[] = {"Testing: ", __func__};
-    char * footer[] = {"End Testing", __func__};
+    char * header[] = {"Testing: ", (char *)__func__};
+    char * footer[] = {"End Testing", (char *)__func__};
     Queue test_queue = malloc(sizeof(struct Queue_s));
     init_queue(test_queue);
     printSectionBlock(header, sizeof(header) / sizeof(char *));
@@ -493,11 +499,10 @@ void test_isEmpty_q() {
     printNewLine();
 }
 
-// TODO
 void test_free_q() {
     // Preparing testing variables
-    char * header[] = {"Testing: ", __func__};
-    char * footer[] = {"End Testing", __func__};
+    char * header[] = {"Testing: ", (char *)__func__};
+    char * footer[] = {"End Testing", (char *)__func__};
     Queue test_queue = malloc(sizeof(struct Queue_s));
     init_queue(test_queue);
     printSectionBlock(header, sizeof(header) / sizeof(char *));
@@ -534,7 +539,7 @@ void test_free_q() {
     printSubSectionBlock("testing freeing non resized queue");
     printNewLine();
     init_queue(test_queue);
-    for (int i = 0; i < MIN_QUEUE_SIZE * 2 - 1)
+    for (int i = 0; i < MIN_QUEUE_SIZE * 2 - 1; i++)
         enqueue_q(i, test_queue);
     free_q(test_queue);
     assert(test_queue->arr == NULL);
