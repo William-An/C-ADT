@@ -5,25 +5,30 @@
 # Variables
 CC = gcc
 CFlags = -std=c99 -Wall -g3
+DEPFlags = -MM -MF $@
 VALGRIND = valgrind
 VFLAGS = --tool=memcheck --leak-check=yes
 
 # Directory
-BUILDDIR := build
+BUILD := build
 SRC := src
-INCLUDE := inc
+INC := inc
 TEST := test
 
 # Name of all source file
 SRCS := $(wildcard $(SRC)/*.c)
-# todo for loop to loop through?
-# SRCS := $(shell filename=$$(basename $(SRCS)); echo "$${filename%.*}")
-# SRCS := $(shell filename=$$(basename $(SRCS)); echo $$filename)
+TESTS := $(wildcard $(TEST)/*.c)
 
-# Name of all object files
-OBJECTS := $(subst $(SRC), $(BUILDDIR), $(SRCS))
-OBJECTS := $(patsubst %.c, %.o, $(OBJECT_LIST))
+# Dependency directory and files
+DEPSDIR := .deps
 
+# Source code dependency
+DEPS := $(subst $(SRC), $(DEPSDIR), $(SRCS))
+DEPS := $(DEPS:.c=.d)
+
+# Test program dependency
+TESTDEPS := $(patsubst $(TEST)%, $(DEPSDIR)%, $(TESTS))
+TESTDEPS := $(TESTDEPS:.c=.d)
 
 ##############################################################################
 # Designate targets that do not correspond directly to files so that they are
@@ -84,46 +89,62 @@ help:
 clean:
 	@echo "Removing all complied files"
 	@rm -rf test/*.tmp
-	@rm -rf	$(BUILDDIR)/*
+	@rm -rf	$(BUILD)
+	@rm -rf $(DEPSDIR)
 	@rm -f *.d
-	@echo "Done\n\n"
+	@echo "Done"
 
-tmp:
-	@echo $(OBJECT_LIST)
+# Create temporary folders
+$(DEPSDIR) $(BUILD): ; @mkdir -p $@
 
 ##############################################################################
 # General Compilation Targets
 ##############################################################################
 
-# Complie the data structure or algorithm itself only
-
-# Mkdir for dependence directory
-# todo autodependency?
-%.d: $(SRC)/%.c
-	@set -e; rm -f $@; \
-	$(CC) -MM $(CFlags) -I $(INCLUDE) $< > $@.$$$$; \
-	sed 's,\($*\)\.o[ :]*,\1.o $@ : ,g' < $@.$$$$ > $@; \
-	rm -f $@.$$$$
-
-%.o $(INCLUDE)/%.h: $(SRC)/%.c 
-	@echo "Compiling object file for $*"
-	@$(CC) -c -o $(BUILDDIR)/$*.o -I $(INCLUDE) $(CFlags) $(SRC)/$*.c 
+# Used to compile possible source codes used by the make target
+$(INC)/%.h: $(SRC)/%.c | $(BUILD)
+	@echo "Compiling object file for $@"
+	@$(CC) -c -o $(BUILD)/$*.o -I $(INC) $(CFlags) $<
 	@echo "Done"
 
-%_test: $(TEST)/%_test.c %.o
+
+# Generating dependency files for source code
+$(DEPSDIR)/%.d: $(SRC)/%.c | $(DEPSDIR)
+	@echo "Generating dependency into $@"
+	@$(CC) -I $(INC) $(CFlags) $(DEPFlags) $<
+	@echo "Done"
+
+# Generating dependency files for test program
+$(DEPSDIR)/%_test.d: $(TEST)/%_test.c | $(DEPSDIR)
+	@echo "Generating test file dependency into $@"
+	@$(CC) -I $(INC) $(CFlags) $(DEPFlags) $<
+	@echo "Done"
+
+%.o: | $(BUILD)
+	@echo "Compiling object file for $<"
+	@$(eval obj_tmp=$(patsubst %.h, %.o, $+))					# Convert the header names into the required object names
+	@$(eval obj_tmp = $(notdir $(obj_tmp)))						# Remove the $(INC) dir 
+	@$(eval obj_tmp = $(filter %.o, $(obj_tmp))) 				# Filter out the first source file needed
+	@$(eval srcs_tmp = $(addprefix $(BUILD)/, $(obj_tmp)))	# Add build/ prefix to objects
+	@$(CC) -c -o $(BUILD)/$@ -I $(INC) $(CFlags) $<		# Compile the object file for this source code
+	@echo "Done"
+
+# Link the compiled object code
+%_test: %_test.o | $(BUILD)
 	@echo "Compiling test program for $*"
-	$(CC) -o $(BUILDDIR)/$*_test.out -I $(INCLUDE) $(CFlags) $(TEST)/$*_test.c $(BUILDDIR)/$*.o
+	@$(CC) -o $(BUILD)/$*_test.out -I $(INC) $(CFlags) $(BUILD)/$< $(srcs_tmp)
+	@echo "Done"
+
+# Link the compiled object code
+%_main: %_main.o | $(BUILD)
+	@echo "Compiling $*_main.c"
+	@$(CC) -o $(BUILD)/$*_main.out -I $(INC) $(CFlags) $(BUILD)/$< $(srcs_tmp)
 	@echo "Done"
 
 # todo
-full_test:
+full_test: | $(BUILD)
 	@echo "Compiling test programs for all source files in $(SRC)"
 	@echo "ERROR: NOT IMPLEMENTED"
-	@echo "Done"
-
-%_main: $(TEST)/%_main.c $(SRC)/%.c
-	@echo "Compiling $*_main.c"
-	@$(CC) -o $(BUILDDIR)/$*_main.out -I $(INCLUDE) $(CFlags) $(TEST)/$*_main.c $(SRC)/$*.c
 	@echo "Done"
 
 ##############################################################################
@@ -133,16 +154,16 @@ full_test:
 # todo add checker for memory leaks
 %_test_run: %_test
 	@echo "Running test program for $*"
-	@$(BUILDDIR)/$*_test.out
+	@$(BUILD)/$*_test.out
 	@echo
 	@echo "Running memory check for test program"
 	@echo
-	@$(VALGRIND) $(VFLAGS) $(BUILDDIR)/$*_test.out
+	@$(VALGRIND) $(VFLAGS) $(BUILD)/$*_test.out
 	@echo "Done"
 
 %_test_run_specific: %_test
 	@echo "Running test program for $* with $(ARGS) as arguments"
-	@$(BUILDDIR)/$*_test.out $(ARGS)
+	@$(BUILD)/$*_test.out $(ARGS)
 	@echo "Done"
 
 full_run: full_test
@@ -150,4 +171,8 @@ full_run: full_test
 	@echo "ERROR: NOT IMPLEMENTED"
 	@echo "Done"
 
-# include $(SRCS:.c=.d)
+# Avoid include dependency file while cleaning them
+ifneq ($(MAKECMDGOALS),clean)
+-include $(DEPS)
+-include $(TESTDEPS)
+endif
