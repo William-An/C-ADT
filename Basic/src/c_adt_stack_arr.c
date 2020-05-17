@@ -47,7 +47,6 @@ void push_stack(ValueType val, Stack stack) {
     if (stack == NULL)
         return;
     else {
-        // todo Push element to stack, resize if necessary
         if (stack->size < stack->maxSize) {
             stack->arr[stack->size] = val;
             stack->size++;
@@ -70,7 +69,6 @@ ValueType pop_stack(Stack stack) {
     if (stack == NULL)
         return (ValueType) 0;
     else {
-        // todo pop element from stack, resize if necessary
         if (stack->size == 0)   // Empty stack
             return (ValueType) 0;
         else {
@@ -95,7 +93,6 @@ ValueType peek_stack(Stack stack) {
     if (stack == NULL)
         return (ValueType) 0;
     else {
-        // todo pop element from stack, resize if necessary
         if (stack->size == 0)   // Empty stack
             return (ValueType) 0;
         else {

@@ -2,9 +2,6 @@
 # General Makefile for C ADT compilation
 ##############################################################################
 
-# Output setting
-.RECIPEPREFIX = >
-
 # Variables
 CC = gcc
 CFlags = -std=c99 -Wall -g3
@@ -137,12 +134,11 @@ $(BUILD)/%.o: | $(BUILD)
 	@$(eval obj_tmp = $(notdir $(obj_tmp)))									# Remove the $(INC) dir 
 	@$(eval obj_tmp = $(filter %.o, $(obj_tmp))) 							# Filter out the first source file needed
 	@$(eval srcs_tmp = $(addprefix $(BUILD)/, $(obj_tmp)))					# Add build/ prefix to objects
-	$(CC) -c -o $@ -I $(INC) $(CFlags) $(firstword $(src_tmp))	# Compile the object file for this source code
+	@$(CC) -c -o $@ -I $(INC) $(CFlags) $(firstword $(src_tmp))	# Compile the object file for this source code
 	@echo "Done"
 	
 # Link the compiled object code to build executable
 $(BUILD)/%.out: $(BUILD)/%.o  |  $(BUILD)
-	# todo what to do if the previous object code doesnot changed?
 	@echo $+
 	@$(MAKE) -f $(THIS_FILE) $(srcs_tmp) # invoke other target
 	@echo "Compiling test program for $*"
