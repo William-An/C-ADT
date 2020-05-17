@@ -33,7 +33,7 @@ TESTDEPS := $(TESTDEPS:.c=.d)
 
 # Designate targets that do not correspond directly to files so that they are
 # run every time they are called
-.PHONY: help clean %_test %_test_run %_main %_test_run_specific
+.PHONY: help clean %_test %_test_run %_main %_test_run_specific veryclean
 .PHONY: full_test full_run
 
 # Avoid deleting .out file due to interrupted makefile
@@ -48,6 +48,7 @@ help:
 	@echo "Administrative targets:"
 	@echo "  help                 - print this help message"
 	@echo "  clean                - removes the complied files"
+	@echo "  veryclean            - removes the complied files along with dependency files"
 	@echo
 	@echo "Compilation targets:"
 	@echo "  build/%.o            - compiles the individual data structure or"
@@ -87,12 +88,18 @@ help:
 # Administrative Targets
 ##############################################################################
 clean:
-	@echo "Removing all complied files"
+	@echo "Removing temporary test output files"
 	@rm -rf test/*.tmp
-	@rm -rf	$(BUILD)
-	@rm -rf $(DEPSDIR)
-	@rm -f *.d
 	@echo "Done"
+	@echo "Removing all complied files and build directory"
+	@rm -rf	$(BUILD)
+	@echo "Done"
+
+veryclean: clean
+	@echo "Removing all dependency files and .deps directory"
+	@rm -rf $(DEPSDIR)
+	@echo "Done"
+
 
 # Create temporary folders
 $(DEPSDIR) $(BUILD): ; @mkdir -p $@
@@ -128,10 +135,10 @@ $(BUILD)/%.o: | $(BUILD)
 	@$(eval obj_tmp=$+)
 	@$(eval src_tmp=$(firstword $(obj_tmp)))
 	@echo "Compiling object file for $@"
-	@$(eval obj_tmp=$(patsubst %.h, %.o, $(obj_tmp)))						# Convert the header names into the required object names
-	@$(eval obj_tmp = $(notdir $(obj_tmp)))									# Remove the $(INC) dir 
-	@$(eval obj_tmp = $(filter %.o, $(obj_tmp))) 							# Filter out the first source file needed
-	@$(eval srcs_tmp = $(addprefix $(BUILD)/, $(obj_tmp)))					# Add build/ prefix to objects
+	@$(eval obj_tmp=$(patsubst %.h, %.o, $(obj_tmp)))			# Convert the header names into the required object names
+	@$(eval obj_tmp = $(notdir $(obj_tmp)))						# Remove the $(INC) dir 
+	@$(eval obj_tmp = $(filter %.o, $(obj_tmp))) 				# Filter out the first source file needed
+	@$(eval srcs_tmp = $(addprefix $(BUILD)/, $(obj_tmp)))		# Add build/ prefix to objects
 	@$(CC) -c -o $@ -I $(INC) $(CFlags) $(firstword $(src_tmp))	# Compile the object file for this source code
 	@echo "Done"
 	
