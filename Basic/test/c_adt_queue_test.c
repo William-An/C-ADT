@@ -8,8 +8,6 @@
 #include "c_adt_queue.h"
 #define ValueType int
 
-#define CONCAT(A, B) A##B
-
 #define ARGUMENT_AMOUNT 7
 const char* argumentName[] = {
     "help",
@@ -384,16 +382,16 @@ void test_dequeue_q() {
 
     assert(test_queue->maxSize >=  2 * MIN_QUEUE_SIZE); // At least expand to twice as the size
         
-    uint32_t head_pos = test_queue->head;
-    uint32_t tail_pos = test_queue->tail;
-    uint32_t size_orig = test_queue->size;
+    head_pos = test_queue->head;
+    tail_pos = test_queue->tail;
+    size_orig = test_queue->size;
 
     for (int i = 1; i < MIN_QUEUE_SIZE * 2; i++) {
         assert(dequeue_q(test_queue) == i);
         assert(test_queue->arr != NULL);
         assert(test_queue->size == size_orig - i);
     }
-    
+
     assert(test_queue->maxSize == MIN_QUEUE_SIZE);  // Size should return to MIN_QUEUE_SIZE and not less than it
 
     printf("%s complete\n", "testing automatic resizing");
@@ -413,11 +411,34 @@ void test_peek_q() {
     init_queue(test_queue);
     printSectionBlock(header, sizeof(header) / sizeof(char *));
 
-
     // Test 1: Empty queue
+    printSubSectionBlock("testing peek_q with empty queue");
+    printNewLine();
+    assert(peek_q(test_queue) == 0);
+    printf("%s complete\n", "testing peek_q with empty queue");
+    printDivider();
+
     // Test 2: Queue with single element
+    printSubSectionBlock("testing peek_q with single elment queue");
+    printNewLine();
+    enqueue_q(1, test_queue);
+    assert(peek_q(test_queue) == 1);
+    printf("%s complete\n", "testing peek_q with single elment queue");
+    printDivider();
+
     // Test 3: Queue with multiple elements
-    // Test 4: Test automatic resizing
+    printSubSectionBlock("testing peek_q with multiple elments queue");
+    printNewLine();
+    free_q(test_queue);
+    init_queue(test_queue);
+    enqueue_q(1, test_queue);
+    enqueue_q(2, test_queue);
+    enqueue_q(3, test_queue);
+    assert(peek_q(test_queue) == 1);
+    dequeue_q(test_queue);
+    assert(peek_q(test_queue) == 2);
+    printf("%s complete\n", "testing peek_q with multiple elments queue");
+    printDivider();
     
     free_q(test_queue);
     free(test_queue);
@@ -433,11 +454,38 @@ void test_isEmpty_q() {
     init_queue(test_queue);
     printSectionBlock(header, sizeof(header) / sizeof(char *));
 
-
     // Test 1: Empty queue
+    printSubSectionBlock("testing isEmpty_q with empty queue");
+    printNewLine();
+    assert(isEmpty_q(test_queue));
+    printf("%s complete\n", "testing isEmpty_q with empty queue");
+    printDivider();
+
     // Test 2: Queue with single element
+    printSubSectionBlock("testing isEmpty_q with single elment queue");
+    printNewLine();
+    enqueue_q(1, test_queue);
+    assert(!isEmpty_q(test_queue));
+    printf("%s complete\n", "testing isEmpty_q with single elment queue");
+    printDivider();
+
     // Test 3: Queue with multiple elements
-    // Test 4: Test automatic resizing
+    printSubSectionBlock("testing isEmpty_q with multiple elments queue");
+    printNewLine();
+    free_q(test_queue);
+    init_queue(test_queue);
+    enqueue_q(1, test_queue);
+    enqueue_q(2, test_queue);
+    enqueue_q(3, test_queue);
+    assert(!isEmpty_q(test_queue));
+    dequeue_q(test_queue);
+    assert(!isEmpty_q(test_queue));
+    dequeue_q(test_queue);
+    assert(!isEmpty_q(test_queue));
+    dequeue_q(test_queue);
+    assert(isEmpty_q(test_queue));
+    printf("%s complete\n", "testing isEmpty_q with multiple elments queue");
+    printDivider();
     
     free_q(test_queue);
     free(test_queue);
@@ -445,6 +493,7 @@ void test_isEmpty_q() {
     printNewLine();
 }
 
+// TODO
 void test_free_q() {
     // Preparing testing variables
     char * header[] = {"Testing: ", __func__};
@@ -453,11 +502,48 @@ void test_free_q() {
     init_queue(test_queue);
     printSectionBlock(header, sizeof(header) / sizeof(char *));
 
+    // Test 1: Free empty queue
+    printSubSectionBlock("testing freeing empty queue");
+    printNewLine();
+    free_q(test_queue);
+    assert(test_queue->arr == NULL);
+    assert(test_queue->maxSize == MIN_QUEUE_SIZE);
+    assert(test_queue->head == 0);
+    assert(test_queue->tail == 0);
+    assert(test_queue->size == 0);
+    printf("%s complete\n", "testing freeing empty queue");
+    printDivider();
 
-    // Test 1: Empty queue
-    // Test 2: Queue with single element
-    // Test 3: Queue with multiple elements
-    // Test 4: Test automatic resizing
+    // Test 2: Free non resized queue
+    printSubSectionBlock("testing freeing non resized queue");
+    printNewLine();
+    init_queue(test_queue);
+    enqueue_q(1, test_queue);
+    enqueue_q(2, test_queue);
+    enqueue_q(3, test_queue);
+    free_q(test_queue);
+    assert(test_queue->arr == NULL);
+    assert(test_queue->maxSize == MIN_QUEUE_SIZE);
+    assert(test_queue->head == 0);
+    assert(test_queue->tail == 0);
+    assert(test_queue->size == 0);
+    printf("%s complete\n", "testing freeing non resized queue");
+    printDivider();
+
+    // Test 3: Free resizedd queue
+    printSubSectionBlock("testing freeing non resized queue");
+    printNewLine();
+    init_queue(test_queue);
+    for (int i = 0; i < MIN_QUEUE_SIZE * 2 - 1)
+        enqueue_q(i, test_queue);
+    free_q(test_queue);
+    assert(test_queue->arr == NULL);
+    assert(test_queue->maxSize == MIN_QUEUE_SIZE);
+    assert(test_queue->head == 0);
+    assert(test_queue->tail == 0);
+    assert(test_queue->size == 0);
+    printf("%s complete\n", "testing freeing non resized queue");
+    printDivider();
     
     free_q(test_queue);
     free(test_queue);
