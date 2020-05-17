@@ -50,8 +50,9 @@ help:
 	@echo "  clean                - removes the complied files"
 	@echo
 	@echo "Compilation targets:"
-	@echo "  %.o                  - compiles the individual data structure or"
+	@echo "  build/%.o            - compiles the individual data structure or"
 	@echo "                         algorithm with source file as of src/%.c"
+	@echo "  build/%.out          - compiles and link the dependency to form executable"
 	@echo
 	@echo "  %_test               - compiles the test program (with name like"
 	@echo "                         \"test/c_adt_list_test.c\") for the data structure"
@@ -71,9 +72,6 @@ help:
 	@echo
 	@echo "Test targets:"
 	@echo "  %_test_run           - compiles and run the whole test program for the data"
-	@echo "                         structure or algorithm with source file as of src/%.c"
-	@echo
-	@echo "  %_test_run_specific  - compiles and run the specific test program for the data"
 	@echo "                         structure or algorithm with source file as of src/%.c"
 	@echo "                         The specific test is specified via a \"ARGS\"" 
 	@echo "                         when using the make command"
@@ -139,7 +137,6 @@ $(BUILD)/%.o: | $(BUILD)
 	
 # Link the compiled object code to build executable
 $(BUILD)/%.out: $(BUILD)/%.o  |  $(BUILD)
-	@echo $+
 	@$(MAKE) -f $(THIS_FILE) $(srcs_tmp) # invoke other target
 	@echo "Compiling test program for $*"
 	@$(CC) -o $@ -I $(INC) $(CFlags) $< $(srcs_tmp)
@@ -155,19 +152,20 @@ full_test: | $(BUILD)
 # General Test Targets
 ##############################################################################
 
-# todo add checker for memory leaks
+# Compile only target
+%_test:	$(BUILD)/%_test.out ;
+
+%_main:	$(BUILD)/%_main.out ;
+
 %_test_run: $(BUILD)/%_test.out
 	@echo "Running test program for $*"
-	@$<
+	@$< $(ARGS)
 	@echo
+ifeq ($(ARGS), "")
 	@echo "Running memory check for test program"
 	@echo
 	@$(VALGRIND) $(VFLAGS) $(BUILD)/$*_test.out
-	@echo "Done"
-
-%_test_run_specific: $(BUILD)/%_test.out
-	@echo "Running test program for $* with $(ARGS) as arguments"
-	@$< $(ARGS)
+endif
 	@echo "Done"
 
 full_run: full_test
