@@ -14,6 +14,7 @@ BUILD := build
 SRC := src
 INC := inc
 TEST := test
+THIS_FILE := $(lastword $(MAKEFILE_LIST))
 
 # Name of all source file
 SRCS := $(wildcard $(SRC)/*.c)
@@ -34,7 +35,7 @@ TESTDEPS := $(TESTDEPS:.c=.d)
 # Designate targets that do not correspond directly to files so that they are
 # run every time they are called
 ##############################################################################
-.PHONY: help clean tmp
+.PHONY: help clean %_test %_test_run %_main %_test_run_specific
 .PHONY: full_test full_run
 
 ##############################################################################
@@ -102,10 +103,13 @@ $(DEPSDIR) $(BUILD): ; @mkdir -p $@
 ##############################################################################
 
 # Used to compile possible source codes used by the make target
-$(INC)/%.h: $(SRC)/%.c | $(BUILD)
-	@echo "Compiling object file for $@"
-	@$(CC) -c -o $(BUILD)/$*.o -I $(INC) $(CFlags) $<
-	@echo "Done"
+
+# todo why get rebuilt every time?
+# Since the object file does not exist in current directory but in build directory
+# $(INC)/%.h: $(SRC)/%.c  | $(BUILD)
+# 	@echo "Compiling object file for $@"
+# 	@$(CC) -c -o $(BUILD)/$*.o -I $(INC) $(CFlags) $<
+# 	@echo "Done"
 
 
 # Generating dependency files for source code
@@ -130,7 +134,9 @@ $(DEPSDIR)/%_test.d: $(TEST)/%_test.c | $(DEPSDIR)
 	@echo "Done"
 
 # Link the compiled object code
-%_test: %_test.o | $(BUILD)
+%_test: %_test.o  |  $(BUILD)
+	@echo $(notdir $(srcs_tmp))
+	@$(MAKE) -f $(THIS_FILE) $(notdir $(srcs_tmp)) # invoke other target
 	@echo "Compiling test program for $*"
 	@$(CC) -o $(BUILD)/$*_test.out -I $(INC) $(CFlags) $(BUILD)/$< $(srcs_tmp)
 	@echo "Done"
@@ -173,6 +179,8 @@ full_run: full_test
 
 # Avoid include dependency file while cleaning them
 ifneq ($(MAKECMDGOALS),clean)
+ifneq ($(MAKECMDGOALS),help)
 -include $(DEPS)
 -include $(TESTDEPS)
+endif
 endif
