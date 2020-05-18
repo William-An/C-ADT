@@ -146,7 +146,7 @@ void test_init_queue() {
     printSectionBlock(header, sizeof(header) / sizeof(char *));
 
     // Test 1: Initialization of queue
-    printSubSectionBlock("testing initialization of stack");
+    printSubSectionBlock("testing initialization of queue");
     init_queue(test_queue);
     printNewLine();
     assert(test_queue->arr != NULL);
@@ -154,7 +154,7 @@ void test_init_queue() {
     assert(test_queue->head == 0);
     assert(test_queue->tail == 0);
     assert(test_queue->size == 0);
-    printf("%s complete\n", "testing initialization of stack");
+    printf("%s complete\n", "testing initialization of queue");
     printDivider();
 
     free_q(test_queue);
@@ -317,6 +317,7 @@ void test_enqueue_q() {
     printf("%s complete\n", "Extensive test");
     printDivider();
 
+    // Clean up
     free_q(test_queue);
     free(test_queue);
     printSectionBlock(footer, sizeof(footer) / sizeof(char *));

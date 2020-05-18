@@ -184,8 +184,12 @@ ValueType peekTail_dq(Dequeue dq) {
     if (dq == NULL)
         return (ValueType) 0;
     else {
-        if (!isEmpty_dq(dq))
-            return (dq->arr)[dq->tail - 1];
+        if (!isEmpty_dq(dq)) {
+            uint32_t i = dq->tail;
+            if (i == 0)
+                i = dq->maxSize;
+            return (dq->arr)[i - 1];
+        }
         else
             return (ValueType) 0;
     }
