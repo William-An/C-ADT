@@ -11,13 +11,7 @@
  * 
  * */
 void init_LL(LinkedList L) {
-    if (L == NULL)
-        return;
-    else {
-        L->head = NULL;
-        L->tail = NULL;
-        L->nodeCount = 0;
-    }
+
 }
 
 /**
@@ -27,13 +21,7 @@ void init_LL(LinkedList L) {
  * 
  * */
 void _free_LL(PtrToLinkedListNode node) {
-    if (node->next == NULL) {
-        free(node);
-    } else {
-        _free_LL(node->next);
-        free(node);
-    }
-    return;
+
 }
 
 /**
@@ -43,12 +31,7 @@ void _free_LL(PtrToLinkedListNode node) {
  * 
  * */
 void free_LL(LinkedList L) {
-    if (L != NULL && L->head != NULL) {
-        _free_LL(L->head);
-        L->nodeCount = 0;
-        L->head = NULL;
-        L->tail = NULL;
-    }
+
 }
 
 
@@ -60,10 +43,7 @@ void free_LL(LinkedList L) {
  * 
  * */
 int isEmpty_LL(LinkedList L) {
-    if (L == NULL)
-        return 1;
-    else
-        return L->nodeCount == 0;
+
 }
 
 /**
@@ -75,10 +55,7 @@ int isEmpty_LL(LinkedList L) {
  * 
  * */
 int isLast_LL(PtrToLinkedListNode node, LinkedList L) {
-    if (L == NULL || L->tail == NULL)
-        return 0;
-    else
-        return L->tail->value == node->value;
+
 }
 
 /**
@@ -90,22 +67,7 @@ int isLast_LL(PtrToLinkedListNode node, LinkedList L) {
  * 
  * */
 PtrToLinkedListNode find_LL(ValueType val, LinkedList L) {
-    if (L == NULL)
-        return NULL;
 
-    PtrToLinkedListNode node = NULL;
-    PtrToLinkedListNode head = L->head;
-    while (head != NULL)
-    {
-        if (head->value == val) {
-            node = head;
-            break;
-        } else if (head->next == NULL)
-            break;
-        else
-            head = head->next;
-    }
-    return node;
 }
 
 /**
@@ -116,39 +78,7 @@ PtrToLinkedListNode find_LL(ValueType val, LinkedList L) {
  * 
  * */
 void deleteNode_LL(ValueType val, LinkedList L) {
-    if (L == NULL || L->nodeCount == 0)
-        return;
 
-    PtrToLinkedListNode parent = L->head;
-
-    // Node at head
-    if (parent != NULL && parent->value == val) {
-        L->head = parent->next;
-        if (L->tail == parent)  // update tail pointer
-            L->tail = NULL;
-        L->nodeCount--;
-        free(parent);
-    } else {
-        PtrToLinkedListNode node = parent->next;
-        // Find the node that match
-        while (node != NULL)
-        {
-            if (node->value == val) {
-                // Found the match
-                parent->next = node->next;
-                if (L->tail == node)
-                    L->tail = parent;
-                L->nodeCount--;
-                free(node);
-                node = NULL;
-            } else {
-                // Traverse the list
-                parent = node;
-                node = node->next;
-            }
-        }
-    }
-    return;
 }
 
 /**
@@ -160,28 +90,7 @@ void deleteNode_LL(ValueType val, LinkedList L) {
  * 
  * */
 PtrToLinkedListNode findPrev_LL(ValueType val, LinkedList L) {
-    if (L == NULL)
-        return NULL;
 
-    PtrToLinkedListNode result = NULL;
-    PtrToLinkedListNode parent = L->head;
-    if (parent != NULL && parent->value != val) {
-        PtrToLinkedListNode node = parent->next;
-        // Find the node that match
-        while (node != NULL)
-        {
-            if (node->value == val) {
-                // Found the match
-                result = parent;
-                node = NULL;
-            } else {
-                // Traverse the list
-                parent = node;
-                node = node->next;
-            }
-        }
-    }
-    return result;
 }
 
 /**
@@ -193,27 +102,7 @@ PtrToLinkedListNode findPrev_LL(ValueType val, LinkedList L) {
  * 
  * */
 void insert_LL(ValueType val, LinkedList L, uint32_t index) {
-    if (L == NULL)
-        return;
-    else if (index == 0)
-        insertHead_LL(val, L);
-    else if (index >= L->nodeCount)
-        insertTail_LL(val, L);
-    else {
-        PtrToLinkedListNode parent = L->head;
-        PtrToLinkedListNode node = parent->next;    // Guarantee available
-        for (uint32_t i = 0; i < index - 1; i++) {
-            parent = node;
-            node = node->next;
-        }
 
-        // Allocate space
-        PtrToLinkedListNode tmp = (PtrToLinkedListNode) malloc(sizeof(struct LinkedListNode));
-        tmp->value = val;
-        parent->next = tmp;
-        tmp->next = node;
-        L->nodeCount++;
-    }
 }
 
 /**
@@ -224,18 +113,7 @@ void insert_LL(ValueType val, LinkedList L, uint32_t index) {
  * 
  * */
 void insertHead_LL(ValueType val, LinkedList L) {
-    if (L == NULL)
-        return;
-    else {
-        // Allocate space
-        PtrToLinkedListNode tmp = (PtrToLinkedListNode) malloc(sizeof(struct LinkedListNode));
-        tmp->value = val;
-        tmp->next = L->head;
-        L->head = tmp;
-        L->nodeCount++;
-        if (L->nodeCount == 1) // initial insert
-            L->tail = L->head;
-    }
+
 }
 
 /**
@@ -246,23 +124,7 @@ void insertHead_LL(ValueType val, LinkedList L) {
  * 
  * */
 void insertTail_LL(ValueType val, LinkedList L) {
-    if (L == NULL)
-        return;
-    else {
-        // Allocate space
-        PtrToLinkedListNode tmp = (PtrToLinkedListNode) malloc(sizeof(struct LinkedListNode));
-        tmp->value = val;
-        tmp->next = NULL;
-        if (L->tail == NULL) {
-            // initial insert
-            L->head = tmp;
-            L->tail = tmp;
-        } else {
-            L->tail->next = tmp;
-            L->tail = tmp;
-        }
-        L->nodeCount++;
-    }
+
 }
 
 // ************************************************************************
@@ -276,13 +138,7 @@ void insertTail_LL(ValueType val, LinkedList L) {
  * 
  * */
 void init_DLL(DoubleLinkedList L) {
-    if (L == NULL)
-        return;
-    else {
-        L->head = NULL;
-        L->tail = NULL;
-        L->nodeCount = 0;
-    }
+
 }
 
 /**
@@ -292,20 +148,7 @@ void init_DLL(DoubleLinkedList L) {
  * 
  * */
 void free_DLL(DoubleLinkedList L) {
-    if (L == NULL || L->nodeCount == 0)
-        return;
 
-    PtrToDoubleListNode node = L->tail;
-    while (node != NULL && node->prev != NULL) {
-        node = node->prev;
-        free(node->next);
-    }
-    free(node); // Reach head
-
-    L->head = NULL;
-    L->tail = NULL;
-    L->nodeCount = 0;
-    return;
 }
 
 /**
@@ -316,10 +159,7 @@ void free_DLL(DoubleLinkedList L) {
  * 
  * */
 int isEmpty_DLL(DoubleLinkedList L) {
-    if (L == NULL)
-        return 1;
-    else
-        return L->nodeCount == 0;
+
 }
 
 /**
@@ -331,10 +171,7 @@ int isEmpty_DLL(DoubleLinkedList L) {
  * 
  * */
 int isLast_DLL(PtrToDoubleListNode node, DoubleLinkedList L) {
-    if (L == NULL || L->tail == NULL)
-        return 0;
-    else
-        return L->tail->value == node->value;
+
 }
 
 /**
@@ -346,22 +183,7 @@ int isLast_DLL(PtrToDoubleListNode node, DoubleLinkedList L) {
  * 
  * */
 PtrToDoubleListNode find_DLL(ValueType val, DoubleLinkedList L) {
-    if (L == NULL)
-        return NULL;
 
-    PtrToDoubleListNode node = NULL;
-    PtrToDoubleListNode head = L->head;
-    while (head != NULL)
-    {
-        if (head->value == val) {
-            node = head;
-            break;
-        } else if (head->next == NULL)
-            break;
-        else
-            head = head->next;
-    }
-    return node;
 }
 
 /**
@@ -372,29 +194,7 @@ PtrToDoubleListNode find_DLL(ValueType val, DoubleLinkedList L) {
  * 
  * */
 void deleteNode_DLL(ValueType val, DoubleLinkedList L) {
-    if (L == NULL || L->nodeCount == 0)
-        return;
-    else {
-        PtrToDoubleListNode node = find_DLL(val, L);
-        if (node == NULL)
-            return;
-        else if (node->prev != NULL) {   // not head
-            node->prev->next = node->next;
-            if (node->next != NULL) // not tail
-                node->next->prev = node->prev;
-            else // Tail
-                L->tail = node->prev;
-        }
-        else {  // head
-            if (node->next != NULL) // not tail as well
-                node->next->prev = NULL;
-            else    // node is tail
-                L->tail = NULL;
-            L->head = node->next;
-        }
-        L->nodeCount--;
-        free(node);
-    }
+
 }
 
 /**
@@ -406,29 +206,7 @@ void deleteNode_DLL(ValueType val, DoubleLinkedList L) {
  * 
  * */
 void insert_DLL(ValueType val, DoubleLinkedList L, uint32_t index) {
-    if (L == NULL)
-        return;
-    else if (index == 0)
-        insertHead_DLL(val, L);
-    else if (index >= L->nodeCount)
-        insertTail_DLL(val, L);
-    else {
-        PtrToDoubleListNode parent = L->head;
-        PtrToDoubleListNode node = parent->next;    // Guarantee available
-        for (uint32_t i = 0; i < index - 1; i++) {
-            parent = node;
-            node = node->next;
-        }
 
-        // Allocate space
-        PtrToDoubleListNode tmp = (PtrToDoubleListNode) malloc(sizeof(struct DoubleLinkedListNode));
-        tmp->value = val;
-        parent->next = tmp;
-        tmp->prev = parent;
-        tmp->next = node;
-        node->prev = tmp;
-        L->nodeCount++;
-    }
 }
 
 /**
@@ -439,23 +217,7 @@ void insert_DLL(ValueType val, DoubleLinkedList L, uint32_t index) {
  * 
  * */
 void insertHead_DLL(ValueType val, DoubleLinkedList L) {
-    if (L == NULL)
-        return;
-    else {
-        // Allocate space
-        PtrToDoubleListNode tmp = (PtrToDoubleListNode) malloc(sizeof(struct DoubleLinkedListNode));
-        tmp->value = val;
-        tmp->next = L->head;
-        tmp->prev = NULL;
-        if (L->head == NULL) {  // initial insert
-            L->head = tmp;
-            L->tail = L->head;
-        } else {
-            L->head->prev = tmp;
-            L->head = tmp;
-        }
-        L->nodeCount++;
-    }
+
 }
 
 /**
@@ -466,23 +228,5 @@ void insertHead_DLL(ValueType val, DoubleLinkedList L) {
  * 
  * */
 void insertTail_DLL(ValueType val, DoubleLinkedList L) {
-    if (L == NULL)
-        return;
-    else {
-        // Allocate space
-        PtrToDoubleListNode tmp = (PtrToDoubleListNode) malloc(sizeof(struct DoubleLinkedListNode));
-        tmp->value = val;
-        tmp->next = NULL;
-        tmp->prev = NULL;
-        if (L->tail == NULL) {
-            // initial insert
-            L->head = tmp;
-            L->tail = tmp;
-        } else {
-            L->tail->next = tmp;
-            tmp->prev = L->tail;
-            L->tail = tmp;
-        }
-        L->nodeCount++;
-    }
+
 }

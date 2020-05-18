@@ -11,9 +11,7 @@
  * 
  * */
 void init_stack(Stack stack) {
-    if (stack == NULL)
-        return;
-    init_LL((LinkedList) stack);
+
 }
 
 /**
@@ -24,9 +22,7 @@ void init_stack(Stack stack) {
  * 
  * */
 void push_stack(ValueType val, Stack stack) { 
-    if (stack == NULL)
-        return;
-    insertHead_LL(val, (LinkedList) stack);
+
 }
 
 /**
@@ -37,14 +33,7 @@ void push_stack(ValueType val, Stack stack) {
  * 
  * */
 ValueType pop_stack(Stack stack) {
-    if (stack == NULL || isEmpty_stack(stack) == 1)
-        return (ValueType) 0;
-    ValueType res = ((LinkedList) stack)->head->value;
-    PtrToLinkedListNode node = ((LinkedList) stack)->head;
-    ((LinkedList) stack)->head = node->next;
-    ((LinkedList) stack)->nodeCount--;
-    free(node);
-    return res;
+
 }
 
 /**
@@ -55,10 +44,7 @@ ValueType pop_stack(Stack stack) {
  * 
  * */
 ValueType peek_stack(Stack stack) {
-    if (stack == NULL || isEmpty_stack(stack) == 1)
-        return (ValueType) 0;
-    ValueType res = ((LinkedList) stack)->head->value;
-    return res;
+
 }
 
 /**
@@ -69,7 +55,7 @@ ValueType peek_stack(Stack stack) {
  * 
  * */
 int isEmpty_stack(Stack stack) {
-    return isEmpty_LL((LinkedList) stack);
+
 }
 
 /**
@@ -79,5 +65,5 @@ int isEmpty_stack(Stack stack) {
  * 
  * */
 void free_stack(Stack stack) {
-    free_LL((LinkedList) stack);
+
 }
