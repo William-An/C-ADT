@@ -19,6 +19,20 @@
 #define MIN_QUEUE_SIZE 10
 #endif // MIN_QUEUE_SIZE
 
+/**
+ * 
+ * Data Structure definition for array implementation of Dequeue
+ * 
+ * */
+
+struct Dequeue_s {
+    ValueType* arr;
+    uint32_t size;      // Current element count in the dequeue
+    uint32_t maxSize;   // Current array size
+    uint32_t head;      // Current dequeue head index in the array (next element to be remove from head)
+    uint32_t tail;      // Current dequeue tail index in the array (next available slot to insert element)
+};
+
 // Data Structure Definition
 struct Dequeue_s;
 typedef struct Dequeue_s* Dequeue;
